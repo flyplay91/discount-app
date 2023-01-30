@@ -1,0 +1,102 @@
+<div class="row" style="margin: 10px 0 30px;">
+  <div class="col-sm-8">
+    <!-- <span id="upload-products" class="btn btn-primary"
+      data-toggle="modal" data-target="#upload-products-modal">
+      Upload Products
+    </span> -->
+    <%= form_tag products_path, id: 'upload-form', multipart: true do %>
+      <label id="upload-products" class="btn btn-primary">
+        Upload Products
+        <input type="file" name="file" id="file" class="d-none" accept=".csv">
+      </label>
+      <%= link_to 'Go to all products', products_path, class: "btn btn-secondary" %> 
+    <% end %>
+  </div>
+  <div class="col-sm-4">
+    <%= form_tag missing_products_path, method: :get do %>
+      <input name="keyword" class="form-control"
+        placeholder="Search" style="font-size: 18px;" value="<%= @keyword %>">
+    <% end %>
+  </div>
+</div>
+<% if @products.present? %>
+  <% @products.each do |product| %>
+    <div class="product-item">
+      <div class="row product">
+        <div class="col-sm-1">
+          <i class="bi bi-chevron-down toggle-variant"></i>
+        </div>
+        <div class="col-sm-1">
+          <% if product.featured_image.present? %>
+            <img src="<%= product.featured_image %>">
+          <% end %>
+        </div>
+        <div class="col-sm-4">
+          <%= product.title %>
+          <br>
+          <a href="https://jpmc.keeperscollective.com/products/<%= product.handle %>" target="_blank">View Product</a>
+        </div>
+        <div class="col-sm-3">
+          <% product.vendor_names.each do |vendor_name| %>
+            <p><%= vendor_name %></p>
+          <% end %>
+        </div>
+        <div class="col-sm-3">
+          <% product.variant_brands.each do |variant_brand| %>
+            <p><%= variant_brand %></p>
+          <% end %>
+        </div>
+      </div>
+      <div class="variant-items d-none">
+        <% product.variants.each do |variant| %>
+          <div class="row variant-item">
+            <div class="col-sm-4 offset-sm-2">
+              <%= variant.title %>
+            </div>
+            <div class="col-sm-4">
+              <%= variant.sku %>
+            </div>
+            <div class="col-sm-2">
+              <%= link_to edit_variant_path(variant) do %>
+                <i class="bi bi-pencil"></i>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  No products
+<% end %>
+
+<%= will_paginate @products, params: {page: params[:page]} %>
+
+
+<style>
+  .product-item .product {
+    align-items: center;
+    border: 1px solid #bbb;
+    margin: 10px;
+  }
+
+  .product-item .product img {
+    width: 100%;
+  }
+
+  .variant-item {
+    margin: 5px 10px;
+    padding: 10px 0px;
+    border: 1px solid #ddd;
+  }
+
+  .variant-item a {
+    float: right;
+  }
+
+  p {
+    margin: 2px 0;
+  }
+</style>
+
+<%= render 'products_modal' %>

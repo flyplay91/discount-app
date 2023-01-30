@@ -1,0 +1,82 @@
+<template id="staff-account-template">
+  <div class="row" style="align-items: center; margin-bottom: 15px;">
+    <div class="col-sm-5">
+      <label for="shop_staff_account_email_NESTED_ID">Email</label>
+      <input type="email" name="shop[staff_accounts][][email]"
+        id="shop_staff_account_email_NESTED_ID" value=""
+        class="form-control" required="required">
+    </div>
+    <div class="col-sm-5">
+      <label for="shop_staff_account_name_NESTED_ID">Name</label>
+      <input type="text" name="shop[staff_accounts][][name]"
+        id="shop_staff_account_name_NESTED_ID" value=""
+        class="form-control" required="required">
+    </div>
+    <div class="col-sm-2">
+      <i class="bi bi-trash"></i>
+    </div>
+  </div>
+</template>
+
+<template id="purchase-order-status-template">
+  <div class="row" style="align-items: center; margin-bottom: 15px;">
+    <div class="col-sm-6">
+      <input multiple="multiple" id="shop_purchase_order_statuses_NESTED_ID"
+        class="form-control" type="text" name="shop[purchase_order_statuses][]">
+    </div>
+    <div class="col-sm-6">
+      <i class="bi bi-trash"></i>
+    </div>
+  </div>
+</template>
+
+<template id="draft-order-status-template">
+  <div class="row" style="align-items: center; margin-bottom: 15px;">
+    <div class="col-sm-6">
+      <input multiple="multiple" id="shop_draft_order_statuses_NESTED_ID"
+        class="form-control" type="text" name="shop[draft_order_statuses][]">
+    </div>
+    <div class="col-sm-6">
+      <i class="bi bi-trash"></i>
+    </div>
+  </div>
+</template>
+
+<template id="purchase-order-stage-template">
+  <div class="row" style="align-items: center; margin-bottom: 15px;">
+    <div class="col-sm-6">
+      <input multiple="multiple"
+        id="shop_purchase_order_stages_NESTED_ID" class="form-control"
+        type="text" name="shop[purchase_order_stages][]">
+    </div>
+    <div class="col-sm-6">
+      <i class="bi bi-trash"></i>
+    </div>
+  </div>
+</template>
+
+<template id="purchase-order-next-action-template">
+  <div class="row" style="align-items: center; margin-bottom: 15px;">
+    <div class="col-sm-6">
+      <input multiple="multiple"
+      id="shop_purchase_order_next_actions_NESTED_ID" class="form-control"
+      type="text" name="shop[purchase_order_next_actions][]">
+    </div>
+    <div class="col-sm-6">
+      <i class="bi bi-trash"></i>
+    </div>
+  </div>
+</template>
+
+<template id="category-template">
+  <div class="row" style="align-items: center; margin-bottom: 15px;">
+    <div class="col-sm-6">
+      <input value="" multiple="multiple" id="shop_categories_NESTED_ID"
+        class="form-control" type="text" name="shop[categories][]">
+    </div>
+    <div class="col-sm-6">
+      <i class="bi bi-trash"></i>
+    </div>
+  </div>
+</template>
+

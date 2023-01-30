@@ -1,0 +1,50 @@
+<% @collections.each do |collection| %>
+  $('#collectionsModal #search_results').append(
+    "<%= escape_javascript render(partial: 'collection', locals: { collection: collection }) %>"
+  );
+<% end %>
+$('#collectionsModal #search_results a').remove();
+<% if @url.present? %>
+  $('#collectionsModal #search_results').append('<a href="<%= @url %>"></a>');
+<% end %>
+
+$('#collectionsModal #search_results a').off('inview');
+$('#collectionsModal #search_results a').on('inview', function(event, isInView) {
+  if (isInView) {
+    $.ajax({
+      method: 'GET',
+      url: $('#collectionsModal #search_results a').attr('href'),
+      dataType: 'script'
+    });
+  }
+});
+
+$('#collectionsModal #search_results input[type="checkbox"]').off('change');
+$('#collectionsModal #search_results input[type="checkbox"]').on('change', function() {
+  var count = $('#collectionsModal #search_results input[type="checkbox"]:checked').length;
+  $('#collectionsModal #selected_count').text(count);
+});
+
+$('#collectionsModal #add-collection').on('click', function() {
+  var count = $('#collectionsModal #search_results input[type="checkbox"]:checked').length;
+  var shopify_id, shopify_label, one_row, selector;
+  if (count > 0) {
+    $('#collectionsModal #search_results input[type="checkbox"]:checked').each(function() {
+      shopify_id = $(this).val();
+      selector = '#selected-objects-body tr[data-id="' + shopify_id + '"]';
+      if ($(selector).length == 0) {
+        shopify_label = $(this).next().text();
+        one_row = '<tr data-id="' + shopify_id + '"><td>';
+        one_row += shopify_label + '</td><td><span class='
+        one_row += '"btn btn-small btn-danger object-remove">Remove</span></td>';
+        one_row += $('#rule-item-template').html();
+        one_row += '</tr>';
+        $('#selected-objects-body').append(one_row);
+        $('#selected-objects-body tr:last-child .shopify-id').val(shopify_id);
+        $('#selected-objects-body tr:last-child .shopify-type').val('collection');
+        $('#selected-objects-body tr:last-child .name-1').val(shopify_label);
+      }
+    })
+    $("#collectionsModal").modal('hide');
+  }
+})

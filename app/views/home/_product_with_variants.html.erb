@@ -1,0 +1,20 @@
+<li class="row">
+  <div class="col-12">
+    <div class="form-check d-flex align-items-center">
+      <input class="form-check-input product-level" type="checkbox" value="<%= product.shopify_id %>" id="product-<%= product.id %>">
+      <label class="form-check-label" for="product-<%= product.id %>">
+        <img src="<%= product.featured_image %>"><%= product.title %>
+      </label>
+    </div>
+  </div>
+  <% product.variants.each do |variant| %>
+    <div class="col-11 offset-1">
+      <div class="form-check d-flex align-items-center">
+        <input class="form-check-input variant-level" type="checkbox" value="<%= variant.shopify_id %>" id="variant-<%= variant.id %>">
+        <label class="form-check-label" for="variant-<%= variant.id %>">
+          <%= variant.title %>
+        </label>
+      </div>
+    </div>
+  <% end %>
+</li>

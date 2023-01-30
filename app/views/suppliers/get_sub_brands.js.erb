@@ -1,0 +1,7 @@
+var options_html = '';
+<% @vendor.sub_brands.each do |sb| %>
+  options_html += '<option value="' + '<%= sb %>' + '">' + '<%= sb %>' + '</option>'
+<% end %>
+console.log(options_html);
+
+$('#variant_vender_sub_brand').html(options_html);

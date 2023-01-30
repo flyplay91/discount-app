@@ -1,0 +1,87 @@
+<% if @po.present? && @vendor.present? %>
+$('#poItemModal .modal-body').html("<%= escape_javascript(render partial: 'purchase_order_items/form', locals: {}) %>");
+$( "#purchase_order_item_required_ship_date" ).datepicker();
+$('[name="purchase_order_line_item[][setup_qty]"], [name="purchase_order_line_item[][setup_unit_price]"], [name="purchase_order_line_item[][freight_cost]"]').on('change', function() {
+	const formatter = new Intl.NumberFormat('en-US', {
+	  style: 'currency',
+	  currency: 'USD',
+	  minimumFractionDigits: 2
+	});
+	var setup_qty = Math.max(parseInt($(this).closest('table').find('[name="purchase_order_line_item[][setup_qty]"]').val()), 0);
+	var setup_price = Math.max(parseFloat($(this).closest('table').find('[name="purchase_order_line_item[][setup_unit_price]"]').val()), 0);
+
+	var qty = Math.max(parseInt($(this).closest('table').find('[name="purchase_order_line_item[][qty]"]').val()), 0);
+	var price = Math.max(parseFloat($(this).closest('table').find('[name="purchase_order_line_item[][unit_cost]"]').val()), 0);
+
+	var freight = Math.max(parseFloat($(this).closest('table').find('[name="purchase_order_line_item[][freight_cost]"]').val()), 0);
+
+	var total = qty * price + setup_qty * setup_price + freight;
+
+	$(this).closest('table').find('[data-item-total]').html(formatter.format(total));
+	
+	var total_costs = 0;
+	var total_unit_costs = 0;
+	var setup_total = 0;
+	var run_total = 0;
+	var freight_total = 0;
+	$('[data-item-table]').each(function() {
+		var setup_qty = Math.max(parseInt($(this).find('[name="purchase_order_line_item[][setup_qty]"]').val()), 0);
+		var setup_price = Math.max(parseFloat($(this).find('[name="purchase_order_line_item[][setup_unit_price]"]').val()), 0);
+
+		var qty = Math.max(parseInt($(this).find('[name="purchase_order_line_item[][qty]"]').val()), 0);
+		var price = Math.max(parseFloat($(this).find('[name="purchase_order_line_item[][unit_cost]"]').val()), 0);
+
+		var freight = Math.max(parseFloat($(this).find('[name="purchase_order_line_item[][freight_cost]"]').val()), 0);
+
+		var total = qty * price + setup_qty * setup_price + freight;
+		setup_total += setup_qty * setup_price;
+		freight_total += freight;
+		total_unit_costs += qty * price;
+		total_costs += total;
+	});
+	
+	$('[data-total-costs]').html(formatter.format(total_unit_costs));
+	$('[data-total-setup-cost]').html(formatter.format(setup_total));
+	$('[data-total-run-charge]').html(formatter.format(run_total));
+	$('[data-total-freight-cost]').html(formatter.format(freight_total));
+	$('[data-order-total]').html(formatter.format(total_costs));
+});
+$('[name="purchase_order_line_item[][run_qty]"], [name="purchase_order_line_item[][run_unit_price]"]').on('change', function() {
+	var qty = Math.max(parseInt($(this).closest('tr').find('[name="purchase_order_line_item[][run_qty]"]').val()), 0);
+	var price = Math.max(parseFloat($(this).closest('tr').find('[name="purchase_order_line_item[][run_unit_price]"]').val()), 0);
+	var total = qty * price;
+	const formatter = new Intl.NumberFormat('en-US', {
+	  style: 'currency',
+	  currency: 'USD',
+	  minimumFractionDigits: 2
+	});
+	$(this).closest('tr').find('[data-run-total]').html(formatter.format(total));
+	$(this).closest('tr').find('[data-run-total]').data('run-total', total);
+	var total_costs = parseFloat($('[data-total-costs]').data('total-costs'));
+	var setup_total = 0;
+	var run_total = 0;
+	$('[data-setup-total]').each(function() {
+		setup_total += parseFloat($(this).data('setup-total'));
+	});
+	$('[data-run-total]').each(function() {
+		run_total += parseFloat($(this).data('run-total'));
+	});
+	$('[data-total-setup-cost]').html(formatter.format(setup_total));
+	$('[data-total-run-charge]').html(formatter.format(run_total));
+	$('[data-order-total]').html(formatter.format(total_costs + setup_total + run_total));
+});
+
+$('.invoice-btn').off('click');
+$('.invoice-btn').on('click', function() {
+	$('#poItemModal form [name="send_invoice"]').val(true);
+	$('#poItemModal form').submit();
+});
+
+$('.preview-btn').off('click');
+$('.preview-btn').on('click', function() {
+	$('#poItemModal form [name="preview_invoice"]').val(true);
+	$('#poItemModal form').submit();
+});
+
+$('#poItemModal').modal('show');
+<% end %>

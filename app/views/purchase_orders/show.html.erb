@@ -1,0 +1,270 @@
+<h1>
+	Draft Order:
+	<a href="https://keepers-collective.myshopify.com/admin/draft_orders/<%= @po.draft_order_id %>" target="href"><%= @draft_order.name %></a>
+</h1>
+
+<div>
+	<h3 class="accordion-initiator active">
+		Order Details
+		<i class="bi bi-chevron-down toggle-variant"></i>
+	</h3>
+	<div class="accordion-body">
+		<% if @draft_order.line_items.edges.present? %>
+			<table class="table table-striped">
+				<thead class="thead-dark">
+					<th>Item Title</th>
+					<th>Price Per Item</th>
+					<th>Qty</th>
+					<th style="text-align: right;">Cost</th>
+				</thead>
+				<tbody>
+					<% @draft_order.line_items.edges.each do |line_item| %>
+						<% line_item = line_item.node %>
+						<% variant_id = line_item.variant&.id&.split('/')&.last || line_item.custom_attributes.select{|c_attr| c_attr.key == 'variant_id' }&.first&.value %>
+						<% variant = Variant.find_by(shopify_id: variant_id) %>
+						<% variant = Variant.find_by(sku: line_item.sku) if variant.blank? && line_item.sku.present? %>
+						<% if variant.present? %>
+							<tr>
+								<td>
+									<% if variant&.product.present? %>
+									<a href="https://jpmc.keeperscollective.com/products/<%= variant&.product&.handle %>" href="_blank">
+									<% end %>
+										<%= variant&.product&.title %>
+										(<%= line_item.variant_title || line_item.title %>)
+									<% if variant&.product.present? %>
+									</a>
+									<% end %>
+								</td>
+								<td><%= number_to_currency(line_item.discounted_unit_price) %></td>
+								<td><%= line_item.quantity %></td>
+								<td style="text-align: right;"><%= number_to_currency(line_item.discounted_total) %></td>
+							</tr>
+						<% end %>
+					<% end %>
+				</tbody>
+			</table>
+		<% end %>
+		
+		<div class="row">
+			<div class="offset-md-7 col-md-5 col-12">
+				<% if @draft_order.custom_attributes.present? %>
+					<table class="table table-striped">
+						<tbody>
+							<% @draft_order.custom_attributes.each do |attribute| %>
+								<% next if attribute.key == 'Tracking_Numbers' || attribute.key == 'token' || attribute.key == 'Total_Processing_Handling_Fee' || attribute.key == 'Total_DropShip_Fee' || attribute.key == 'Total_Taxes' || attribute.key == 'po_number' || attribute.key == 'internal_id' || attribute.key == 'estimated_total' %>
+								<tr>
+									<td style="text-align: right">
+										<% if PurchaseOrder.key_value[attribute.key.to_sym].present? %>
+											<%= PurchaseOrder.key_value[attribute.key.to_sym] %>
+										<% else %>
+											<%= attribute.key %>
+										<% end %>
+									</td>
+									<td style="text-align: right;min-width: 180px"><%= number_to_currency(attribute.value&.strip.presence || 0) %></td>
+								</tr>
+							<% end %>
+
+							<% @draft_order.custom_attributes.each do |attribute| %>
+								<% if attribute.key == 'Total_Processing_Handling_Fee' || attribute.key == 'Total_DropShip_Fee' || attribute.key == 'Total_Taxes' %>
+									<tr>
+										<td style="text-align: right">
+											<% if PurchaseOrder.key_value[attribute.key.to_sym].present? %>
+												<%= PurchaseOrder.key_value[attribute.key.to_sym] %>
+											<% else %>
+												<%= attribute.key %>
+											<% end %>
+										</td>
+										<td style="text-align: right;min-width: 180px"><%= number_to_currency(attribute.value&.strip.presence || 0) %></td>
+									</tr>
+								<% end %>
+							<% end %>
+							<tr>
+								<td style="text-align: right">
+									<b>Subtotal</b>
+								</td>
+								<td style="text-align: right;min-width: 180px"><b><%= number_to_currency(@draft_order.custom_attributes.select{|c_attr| c_attr.key == 'estimated_total'}&.first&.value || @draft_order.total_price) %></b></td>
+							</tr>
+						</tbody>
+					</table>
+				<% end %>
+				<div class="text-right">
+					<button class="btn btn-primary" data-toggle="modal" data-target="#appendModal">Append Draft Order</button>
+					<% if @draft_order.completed_at.blank? %>
+						<button class="btn btn-primary" id="complete_order" data-id="<%= @po.id %>">Complete Draft Order</button>
+					<% else %>
+						<button class="btn btn-primary" id="complete_order" data-id="<%= @po.id %>" disabled>Completed</button>
+					<% end %>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<% cart = Cart.find_by(token: @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'token' }&.first&.value) %>
+	<% cart_json = JSON.parse(cart.full_json) if cart.present? && cart.full_json.present? %>
+	<% if cart_json.present? %>
+		<h5 class="accordion-initiator">
+			Customer Information
+			<i class="bi bi-chevron-down toggle-variant"></i>
+		</h5>
+		<table class="table table-striped">
+			<thead class="thead-dark">
+				<th>Name</th>
+				<th style="text-align: right;">Value</th>
+			</thead>
+			<tbody>
+				<% Cart.customer_attrs.each do |key| %>
+					<% if cart_json['attributes'].present? && cart_json['attributes'][key].present? %>
+						<tr>
+							<td><%= PurchaseOrder.maps[key.to_sym] %></td>
+							<td style="text-align: right;"><%= cart_json['attributes'][key] %></td>
+						</tr>
+					<% end %>
+				<% end %>
+			</tbody>
+		</table>
+		<h5 class="accordion-initiator">
+			Shipping Details
+			<i class="bi bi-chevron-down toggle-variant"></i>
+		</h5>
+		<table class="table table-striped">
+			<thead class="thead-dark">
+				<th>Name</th>
+				<th style="text-align: right;">Value</th>
+			</thead>
+			<tbody>
+				<% Cart.shipping_attrs.each do |key| %>
+					<% next if cart_json['attributes'].present? && cart_json['attributes']['Shipping_ShipType'] == 'Single Address' && (key == 'DropShip_Address_Type' || key == 'Address_Attachment_Type') %>
+					<% if cart_json['attributes'].present? && cart_json['attributes'][key].present? %>
+						<tr>
+							<td><%= PurchaseOrder.maps[key.to_sym] %></td>
+							<td style="text-align: right;">
+								<% if key == 'DropShipAddress_Attachment_File' %><a href="<%= cart_json['attributes'][key] %>" target="_blank"><% end %>
+									<% if key == 'DeliveryNeededBy_Date' %>
+										<%= Time.parse(cart_json['attributes'][key]).strftime('%m-%d-%Y') if cart_json['attributes'][key].present? %>
+									<% else %>
+										<%= cart_json['attributes'][key]&.gsub('ShipType_SingleAddress_', '') %>
+									<% end %>
+								<% if key == 'DropShipAddress_Attachment_File' %></a><% end %>
+							</td>
+						</tr>
+					<% end %>
+				<% end %>
+			</tbody>
+		</table>
+	<% end %>
+	<% if @draft_order.custom_attributes.present? %>
+		<table class="table table-striped">
+			<thead class="thead-dark">
+				<th>Other</th>
+				<th style="text-align: right;">Value</th>
+			</thead>
+			<tbody>
+				<% @draft_order.custom_attributes.each do |attribute| %>
+					<% if attribute.key == 'Tracking_Numbers' || attribute.key == 'token' || attribute.key == 'po_number' || attribute.key == 'internal_id' %>
+						<tr>
+							<td><%= PurchaseOrder.maps[attribute.key.to_sym] %></td>
+							<td style="text-align: right;"><%= attribute.value %></td>
+						</tr>
+					<% end %>
+				<% end %>
+				<tr>
+					<td>Additional Note</td>
+					<td><%= cart_json['note'] %></td>
+				</tr>
+			</tbody>
+		</table>
+	<% end %>
+	<h5 class="accordion-initiator active">
+		Order Settings
+		<i class="bi bi-chevron-down toggle-variant"></i>
+	</h5>
+	<div class="accordion-body">
+		<%= form_for @po, url: purchase_order_path(@po), method: :put do |f| %>
+			<div class="row">
+				<div class="col-6">
+					<%= f.label :assigned_account, 'Assigned Agent' %>
+					<%= f.select :assigned_account,
+            options_for_select(
+              @shop.staff_accounts.collect {|p| p[:email] }, f.object.assigned_account
+            ), {:prompt => 'Select'}, class: 'form-control' %>
+				</div>
+				<div class="col-6">
+					<%= f.label :draft_order_status %>
+					<%= f.select :draft_order_status,
+            options_for_select(
+              @shop.draft_order_statuses&.map {|status| [status.upcase, status]}, f.object.draft_order_status
+            ), {:prompt => 'Select'}, class: 'form-control' %>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6">
+					<br>
+					<%= f.submit 'Save', class: "btn btn-primary" %>
+				</div>
+			</div>
+		<% end %>
+	</div>
+	<br>
+	<br>
+	<h3>Vendor Purchase Orders</h3>
+	<% if @vendor_ids.present? %>
+		<table class="table table-striped">
+			<thead class="thead-dark">
+				<th>Project#</th>
+				<th>PO#</th>
+				<th>Vendor</th>
+				<th>Item</th>
+				<th>Qty</th>
+				<th>Status</th>
+				<th></th>
+			</thead>
+			<tbody>
+				<% @vendor_ids.sort.each do |vendor_id| %>
+					<% vendor = Vendor.find(vendor_id) %>
+					<% po_item = PurchaseOrderItem.find_by(vendor_id: vendor_id, purchase_order_id: @po.id) %>
+					<tr>
+						<td><%= "#{@draft_order.name.gsub('#', '')}" %></td>
+						<td><%= po_item.po_number(@draft_order.name) %></td>
+						<td><%= vendor.company_name %></td>
+						<td>
+							<% @draft_order.line_items.edges.each do |line_item| %>
+								<% variant_id = PurchaseOrder.get_variant_id(line_item) %>
+								<% line_item = line_item.node %>
+								<% variant = Variant.find_by(shopify_id: variant_id) %>
+								<% if variant.present? && (variant.real_vendor_ids.include? vendor_id) %>
+									<%= "#{line_item.variant_title || line_item.title}" %>
+									<br>
+								<% end %>	
+							<% end %>
+						</td>
+						<td>
+							<% @draft_order.line_items.edges.each do |line_item| %>
+								<% variant_id = PurchaseOrder.get_variant_id(line_item) %>
+								<% line_item = line_item.node %>
+								<% variant = Variant.find_by(shopify_id: variant_id) %>
+								<% if variant.present? && (variant.real_vendor_ids.include? vendor_id) %>
+									<%= line_item.quantity %>
+									<br>
+								<% end %>	
+							<% end %>
+						</td>
+						<td><%= po_item&.status || 'opened' %></td>
+						<td>
+							<%= link_to po_item.present? ? edit_purchase_order_item_path(po_item) : new_purchase_order_item_path(vendor_id: vendor_id, po_id: @po.id), method: :get, :remote => true, class: "btn btn-primary" do %>
+								Details
+							<% end %>
+							<!-- <%# if po_item.present? %>
+								<%#= link_to send_invoice_purchase_order_item_path(po_item), method: :get, :remote => true, class: "btn btn-primary" do %>
+									Send Invoice
+								<%# end %>
+							<%# end %> -->
+						</td>
+					</tr>
+				<% end %>
+			</tbody>
+		</table>
+	<% end %>
+</div>
+
+<%= render 'purchase_order_items/po_item_modal' %>
+<%= render 'purchase_orders/append_modal' %>

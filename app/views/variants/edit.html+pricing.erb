@@ -1,0 +1,104 @@
+<%= form_for @variant do |f| %>
+  <div id="variant-content">
+    <div class="row">
+      <div class="col-md-3">
+        <%= render 'left_variants' %>
+      </div>
+      <div class="col-md-9">
+        <div id="pricing-details" class="card">
+          <div class="card-body">
+            <h4>Pricing</h4>
+            <div class="card">
+              <div class="card-body">
+                <h5>Order Quantity</h5>
+                <div class="row">
+                  <div class="col-sm-8">
+                    <%= f.label :min_item_order_qty, 'Minimum Order Quantity' %>
+                    <%= f.number_field :min_item_order_qty, class: 'form-control' %>
+                  </div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-8">
+                    <%= f.label :max_item_order_qty, 'Maximum Order Quantity' %>
+                    <%= f.number_field :max_item_order_qty, class: 'form-control' %>
+                  </div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-8">
+                    <%= f.label :item_qty_per_case, 'Enforced Multiple Quantity' %>
+                    <%= f.number_field :item_qty_per_case, class: 'form-control' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div id="price-levels">
+              <%= f.fields_for :price_levels, @variant.price_levels do |fp| %>
+                <div class="card price-level">
+                  <div class="card-body">
+                    <h5>Price Level</h5>
+                    <i class="bi bi-trash"></i>
+                    <div class="row">
+                      <div class="<%= @vendors.count > 1 ? 'col-sm-4' : 'col-sm-6' %>">
+                        <%= fp.label :item_qty, 'Quantity' %>
+                        <%= fp.number_field :item_qty, class: 'form-control' %>
+                      </div>
+                      <div class="<%= @vendors.count > 1 ? 'col-sm-4' : 'col-sm-6' %>">
+                        <%= fp.label :item_wholesale_cost, 'Wholesale Cost' %>
+                        <%= fp.number_field :item_wholesale_cost, class: 'form-control', step: "0.01" %>
+                      </div>
+                      <% if @vendors.count > 1 %>
+                        <div class="col-sm-4">
+                          <%= fp.label :vendor_cost_type, 'Vendor Cost Type' %>
+                          <%= fp.select :vendor_cost_type,
+                            options_for_select([['Fixed Price', 'fixed_vendor'],
+                              ['Percent Price)', 'percent_vendor']],
+                              fp.object.vendor_cost_type),
+                            {}, class: 'form-control' %>
+                        </div>
+                      <% end %>
+                    </div>
+                    <% if @vendors.count > 1 %>
+                      <div class="card" style="margin-top: 15px;">
+                        <div class="card-body">
+                          <h6>Vendor Cost</h6>
+                          <% @vendors.each_with_index do |vendor, index| %>
+                            <div class="row" style="margin-top: 15px;">
+                              <div class="col-8">
+                                <%= fp.label :vendor_costs, "#{vendor.company_name} Vendor Cost" %>
+                                <%= fp.number_field :vendor_costs, class: 'form-control',
+                                  multiple: true, value: fp.object.vendor_costs[index] %>
+                              </div>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    <% end %>
+                    <% if fp.object.persisted? %>
+                      <%= fp.hidden_field :id %>
+                      <%= fp.hidden_field :_destroy, class: 'destroy' %>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+              <div class="row">
+                <div class="col-12">
+                  <span id="add-price-level" class="btn btn-primary">Add Price Level</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <%= f.submit 'Save' %>
+        <%= link_to 'Product Details', edit_variant_path,
+          style: 'margin-left: 20px;' %>
+      </div>
+    </div>
+    <br>
+  </div>
+<% end %>
+
+<%= render 'template' %>

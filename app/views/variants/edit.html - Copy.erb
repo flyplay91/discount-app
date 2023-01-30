@@ -1,0 +1,747 @@
+<%= form_for @variant do |f| %>
+  <div id="variant-content">
+    <div class="row">
+      <div class="col-md-3">
+        <%= render 'left_variants' %>
+      </div>
+      <div class="col-md-9">
+        <div id="vendor-details" class="card">
+          <div class="card-body">
+            <h4>Vendor Details</h4>
+            <div class="row">
+              <div class="col-6">
+                <%= f.label :supplier_type, 'Product Type' %>
+                <%= f.select :supplier_type, options_for_select(
+                      [['Single Supplier', 'single_supplier'],
+                      ['Supplier/Decorator', 'decorator']],
+                      f.object.supplier_type
+                    ), {}, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div>
+              <% @variant.vendor_ids.take(2).each_with_index do |vendor_id, index| %>
+                <div class="row vendor-profile <%= 'd-none' if index == 1 && @variant.single_supplier? %>">
+                  <div class="col-sm-4 form-group">
+                    <%= f.label :vendor_ids, 'Vendor',
+                      for: "variant_vendor_ids_#{index}" %>
+                    <%= select_tag 'variant[vendor_ids][]',
+                      options_for_select(
+                        Vendor.pluck(:company_name, :id),
+                        vendor_id
+                      ), include_blank: true, class: 'form-control',
+                      id: "variant_vendor_ids_#{index}" %>
+                  </div>
+                  <% vendor = Vendor.find_by_id vendor_id %>
+                  <div class="col-sm-4">
+                    <%= f.label :vender_sub_brands, 'Brand',
+                      for: "variant_vender_sub_brands_#{index}" %>
+                    <%= select_tag 'variant[vender_sub_brands][]',
+                      options_for_select(
+                        vendor&.sub_brands || [],
+                        f.object.vender_sub_brands[index]
+                      ), include_blank: true, class: 'form-control',
+                      id: "variant_vender_sub_brands_#{index}" %>
+                  </div>
+                  <div class="col-sm-4 <%= 'd-none' if @variant.single_supplier? %>">
+                    <!-- <i class="bi bi-trash"></i> -->
+                    <%= f.label :vendor_types, 'Vendor Type',
+                      for: "variant_vendor_types_#{index}" %>
+                    <%= select_tag 'variant[vendor_types][]',
+                      options_for_select(
+                        ['Supplier', 'Decorator'],
+                        f.object.vendor_types[index]
+                      ), class: 'form-control',
+                      id: "variant_vendor_types_#{index}" %>
+                  </div>
+                </div>
+              <% end %>
+              <div class="row" style="display: none;">
+                <div class="col-12">
+                  <span id="add-vendor" class="btn btn-primary">Add Supplier</span>
+                </div>
+              </div>
+            </div>
+            <br>
+          </div>
+        </div>
+        <br>
+        <%= f.submit 'Save' %>
+        <br><br>
+        <div id="product-details" class="card">
+          <div class="card-body">
+            <h4 style="margin-bottom: 15px;">Product Details</h4>
+            <div class="row">
+              <div class="col-sm-12">
+                Shopify Product ID: <b><%= @variant.product.shopify_id %></b>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-12">
+                Shopify SKU: <b><%= @variant.sku %></b>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :supplier_product_name, 'Supplier Product Name' %>
+                <%= f.text_field :supplier_product_name, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :supplier_sku, 'Supplier SKU' %>
+                <%= f.text_field :supplier_sku, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :size, 'Variant Size' %>
+                <%= f.text_field :size, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :color, 'Variant Color' %>
+                <%= f.text_field :color, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :inventory_on_hand, 'Inventory on Hand' %>
+                <%= f.number_field :inventory_on_hand, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :enforced_multiple_quantity, 'Enforced Multiple Quantity' %>
+                <%= f.number_field :enforced_multiple_quantity, class: 'form-control' %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br><br>
+        <div id="production-details" class="card">
+          <div class="card-body">
+            <h4>Production Details</h4>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :base_lead_time, 'Base Lead Time' %>
+                <%= f.text_field :base_lead_time, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :start_production, 'Start Production' %>
+                <%= f.text_field :start_production, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :end_production, 'End Production' %>
+                <%= f.text_field :end_production, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row d-none">
+              <div class="col-sm-8">
+                <%= f.label :lead_time_in_days, 'Lead Time in Days' %>
+                <%= f.text_field :lead_time_in_days, class: 'form-control' %>
+              </div>
+            </div>
+            <!-- <br> -->
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :additional_lead_time, 'Additional Lead Time Notes' %>
+                <%= f.text_field :additional_lead_time, class: 'form-control' %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <br><br>
+        <div id="decoration-artwork-details" class="card">
+          <div class="card-body">
+            <h4>Decoration/Artwork Details</h4>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :proof_number, 'Proof Number' %>
+                <%= f.text_field :proof_number, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :supplier_proof_link, 'Supplier Proof Link' %>
+                <%= f.text_field :supplier_proof_link, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :su_proof_link, 'Straight Up/Keepers Collective Proof Link' %>
+                <%= f.text_field :su_proof_link, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :proof_photo_link, 'Keepers Collective Product Shot Link' %>
+                <%= f.text_field :proof_photo_link, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :decoration_type, 'Decoration Type' %>
+                <%= f.select :decoration_type, options_for_select(
+                    [
+                      ['4CP', '_4cp'],
+                      ['Screen Print', 'screen_print'],
+                      ['Tag', 'tag'],
+                      ['Embroidery', 'embroidery'],
+                      ['Laser Engraved', 'laser_engraved'],
+                      ['Debossed', 'debossed'],
+                      ['Hot Stamped', 'hot_stamped'],
+                      ['Custom Tag', 'custom_tag']
+                    ], f.object.decoration_type
+                  ), {}, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :decoration_location, 'Decoration Location' %>
+                <%= f.text_field :decoration_location, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :logo_name, 'Logo Name' %>
+                <%= f.text_field :logo_name, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :logo_size, 'Logo Size' %>
+                <%= f.text_field :logo_size, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :logo_color, 'Logo Color' %>
+                <%= f.text_field :logo_color, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :artwork_url, 'Artwork/Vector Logo URL' %>
+                <%= f.text_field :artwork_url, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :ship_to, 'Ship To' %>
+                <%= f.select :ship_to, options_for_select(
+                    [
+                      ['Eggers', 'eggers'],
+                      ['AU', 'au'],
+                      ['Customer', 'customer']
+                    ], f.object.ship_to
+                  ), {}, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :blank_docorator, 'Blank Decorator' %>
+                <%= f.text_field :blank_docorator, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :supplier_decorated, 'Supplier Decorated or Blank Product' %>
+                <%= f.text_field :supplier_decorated, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :su_comp, 'SU Comp' %>
+                <%= f.text_field :su_comp, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.check_box :proof_required %>
+                <%= f.label :proof_required, 'Proof Required' %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <br><br>
+        <div id="product-details" class="card">
+          <div class="card-body">
+            <h4>Production Details</h4>
+            <div class="row">
+              <div class="col-sm-12">
+                Shopify SKU: <b><%= @variant.sku %></b>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :size, 'Variant Size' %>
+                <%= f.text_field :size, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :color, 'Variant Color' %>
+                <%= f.text_field :color, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :supplier_product_name, 'Supplier Product Name' %>
+                <%= f.text_field :supplier_product_name, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :supplier_sku, 'Supplier SKU' %>
+                <%= f.text_field :supplier_sku, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :one_time_setup_fee, 'One Time Setup Fee' %>
+                <%= f.number_field :one_time_setup_fee, class: 'form-control',step: 0.01 %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :recurring_reorder_fee, 'Recurring/Re-Order Fee' %>
+                <%= f.number_field :recurring_reorder_fee, class: 'form-control',step: 0.01 %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :quote_number, 'Quote Number' %>
+                <%= f.text_field :quote_number, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :supplier_proof_link, 'Supplier Proof Link' %>
+                <%= f.text_field :supplier_proof_link, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :su_proof_link, 'Straight Up/Keepers Collective Proof Link' %>
+                <%= f.text_field :su_proof_link, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :proof_photo_link, 'Keepers Collective Product Shot Link' %>
+                <%= f.text_field :proof_photo_link, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :artwork_url, 'Artwork/Vector Logo URL' %>
+                <%= f.text_field :artwork_url, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :decoration_location, 'Decoration Location' %>
+                <%= f.text_field :decoration_location, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :decoration_type, 'Decoration Type' %>
+                <%= f.select :decoration_type, options_for_select(
+                    [
+                      ['4CP', '_4cp'],
+                      ['Screen Print', 'screen_print'],
+                      ['Tag', 'tag'],
+                      ['Embroidery', 'embroidery'],
+                      ['Laser Engraved', 'laser_engraved'],
+                      ['Debossed', 'debossed'],
+                      ['Hot Stamped', 'hot_stamped'],
+                      ['Custom Tag', 'custom_tag']
+                    ], f.object.decoration_type
+                  ), {}, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :logo_name, 'Logo Name' %>
+                <%= f.text_field :logo_name, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :logo_color, 'Logo Color' %>
+                <%= f.text_field :logo_color, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :logo_size, 'Logo Size' %>
+                <%= f.text_field :logo_size, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :inventory_on_hand, 'Inventory on Hand' %>
+                <%= f.number_field :inventory_on_hand, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :enforced_multiple_quantity, 'Enforced Multiple Quantity' %>
+                <%= f.number_field :enforced_multiple_quantity, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :base_lead_time, 'Base Lead Time' %>
+                <%= f.text_field :base_lead_time, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :start_production, 'Start Production' %>
+                <%= f.text_field :start_production, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :end_production, 'End Production' %>
+                <%= f.text_field :end_production, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :lead_time_in_days, 'Lead Time in Days' %>
+                <%= f.text_field :lead_time_in_days, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :additional_lead_time, 'Additional Lead Time' %>
+                <%= f.text_field :additional_lead_time, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.check_box :different_cost_based_on_quantity %>
+                <%= f.label :different_cost_based_on_quantity, 'Different cost based on quantity?' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :ship_to, 'Ship To' %>
+                <%= f.select :ship_to, options_for_select(
+                    [
+                      ['Eggers', 'eggers'],
+                      ['AU', 'au'],
+                      ['Customer', 'customer']
+                    ], f.object.ship_to
+                  ), {}, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :proof_number, 'Proof Number' %>
+                <%= f.text_field :proof_number, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :supplier_decoration, 'Supplier Decoration or Blank Product' %>
+                <%= f.text_field :supplier_decoration, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :blank_docorator, 'Blank Decorator' %>
+                <%= f.text_field :blank_docorator, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :supplier_decorated, 'Supplier Decorated or Blank Product' %>
+                <%= f.text_field :supplier_decorated, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :dst_file, 'DST File' %>
+                <%= f.text_field :dst_file, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :su_comp, 'SU Comp' %>
+                <%= f.text_field :su_comp, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.check_box :proof_required %>
+                <%= f.label :proof_required, 'Proof Required' %>
+              </div>
+            </div>
+            <br>
+            <div class="row d-none">
+              <div class="col-sm-8">
+                <%= f.label :standard_lead_in_days, 'Standard Lead Time(In Days)' %>
+                <%= f.number_field :standard_lead_in_days, class: 'form-control' %>
+              </div>
+            </div>
+            <div class="row d-none">
+              <div class="col-sm-8">
+                <%= f.label :inventory_available, 'Quantity Available Inventory' %>
+                <%= f.number_field :inventory_available, class: 'form-control' %>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <br><br>
+        <div id="pricing-details" class="card">
+          <div class="card-body">
+            <h4>Pricing</h4>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :quote_number, 'Quote Number' %>
+                <%= f.text_field :quote_number, class: 'form-control' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.check_box :different_cost_based_on_quantity %>
+                <%= f.label :different_cost_based_on_quantity, 'Different cost based on quantity?' %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :one_time_setup_fee, 'One Time Set Up Fee' %>
+                <%= f.number_field :one_time_setup_fee, class: 'form-control',step: 0.01 %>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-8">
+                <%= f.label :recurring_reorder_fee, 'Recurring/Re-Order Fee' %>
+                <%= f.number_field :recurring_reorder_fee, class: 'form-control',step: 0.01 %>
+              </div>
+            </div>
+            <br>
+            <div class="card">
+              <div class="card-body">
+                <h5>Order Quantity</h5>
+                <div class="row">
+                  <div class="col-sm-8">
+                    <%= f.label :min_item_order_qty, 'Minimum Order Quantity' %>
+                    <%= f.number_field :min_item_order_qty, class: 'form-control' %>
+                  </div>
+                </div>
+                <br>
+                <div class="row d-none">
+                  <div class="col-sm-8">
+                    <%= f.label :max_item_order_qty, 'Maximum Order Quantity' %>
+                    <%= f.number_field :max_item_order_qty, class: 'form-control' %>
+                  </div>
+                </div>
+                <!-- <br> -->
+                <div class="row">
+                  <div class="col-sm-8">
+                    <%= f.label :item_qty_per_case, 'Quantity Per Case' %>
+                    <%= f.number_field :item_qty_per_case, class: 'form-control' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div id="price-levels">
+              <%= f.fields_for :price_levels, @variant.price_levels do |fp| %>
+                <div class="card price-level">
+                  <div class="card-body">
+                    <h5>Price Level</h5>
+                    <i class="bi bi-trash"></i>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <%= fp.label :item_qty, 'Quantity' %>
+                        <%= fp.number_field :item_qty, class: 'form-control' %>
+                      </div>
+                      <div class="col-sm-6">
+                        <%= fp.label :item_wholesale_cost, 'Total Cost per Item' %>
+                        <%= fp.number_field :item_wholesale_cost,
+                          class: 'form-control whole-sale-cost', step: 0.01 %>
+                      </div>
+                    </div>
+                    <br>
+                    <% if @vendors.count > 1 %>
+                      <div class="card d-none" style="margin: 15px 0;">
+                        <div class="card-body">
+                          <h6>Vendor Cost</h6>
+                          <div class="row">
+                            <div class="col-sm-12">
+                              <%= fp.label :vendor_cost_type, 'Vendor Cost Type' %>
+                              <%= fp.select :vendor_cost_type,
+                                options_for_select([['Fixed Price', 'fixed_vendor'],
+                                  ['Percent Price', 'percent_vendor']],
+                                  fp.object.vendor_cost_type),
+                                {}, class: 'form-control' %>
+                            </div>
+                          </div>
+                          <% @vendors.each_with_index do |vendor, index| %>
+                            <% if index % 2 == 0 %>
+                              <div class="row" style="margin-top: 15px;">
+                                <div class="col-6">
+                                  <%= fp.label :vendor_costs, "#{vendor.company_name} Vendor Cost" %>
+                                  <%= fp.number_field :vendor_costs, class: 'form-control',
+                                    multiple: true, value: fp.object.vendor_costs[index] %>
+                                </div>
+                            <% else %>
+                                <div class="col-6">
+                                  <%= fp.label :vendor_costs, "#{vendor.company_name} Vendor Cost" %>
+                                  <%= fp.number_field :vendor_costs, class: 'form-control',
+                                    multiple: true, value: fp.object.vendor_costs[index] %>
+                                </div>
+                              </div>
+                            <% end %>
+                          <% end %>
+                          <% if @vendors.count % 2 == 1 %>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    <% end %>
+                    <div class="row">
+                      <div class="col-sm-6 d-none">
+                        <%= fp.label :sale_price_quantity, 'Sale Price per Quantity' %>
+                        <%= fp.number_field :sale_price_quantity, class: 'form-control' %>
+                      </div>
+                      <div class="col-sm-6">
+                        <%= fp.label :item_sale_price, 'Sale Price per Item' %>
+                        <%= fp.number_field :item_sale_price,
+                          class: 'form-control whole-sale-cost', step: 0.01 %>
+                      </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-6 <%= 'd-none' if f.object.single_supplier? %>">
+                        <%= fp.label :supplier_cost, 'Supplier Cost per Item' %>
+                        <%= fp.number_field :supplier_cost, class: 'form-control', step: 0.01 %>
+                      </div>
+                      <div class="col-sm-6 <%= 'd-none' if f.object.single_supplier? %>">
+                        <%= fp.label :decorator_cost, 'Decorator Cost per Item' %>
+                        <%= fp.number_field :decorator_cost,
+                          class: 'form-control whole-sale-cost', step: 0.01 %>
+                      </div>
+                    </div>
+                    <% if fp.object.persisted? %>
+                      <%= fp.hidden_field :id %>
+                      <%= fp.hidden_field :_destroy, class: 'destroy' %>
+                    <% end %>
+                    <br>
+                    <div class="row d-none">
+                      <div class="col-sm-6">
+                        <%= fp.label :item_markup_type, 'Item Markup Type' %>
+                        <%= fp.select :item_markup_type,
+                          options_for_select([['Fixed Markup', 'fixed_markup'],
+                            ['Percent Markup', 'percent_markup']],
+                            fp.object.item_markup_type),
+                          {}, class: 'form-control markup-type' %>
+                      </div>
+                      <div class="col-sm-6">
+                        <%= fp.label :item_markup_cost, 'Item Markup Cost' %>
+                        <%= fp.number_field :item_markup_cost,
+                          class: 'form-control markup-cost' %>
+                      </div>
+                    </div>
+                    <div class="row d-none">
+                      <div class="col-sm-12">
+                        <p>
+                          Total Sale Price: 
+                          <b class="item-markup-total"><%= fp.object.item_total_markup_cost %></b>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+              <div class="row">
+                <div class="col-12">
+                  <span id="add-price-level" class="btn btn-primary">Add Price Level</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <%= f.submit 'Save' %>
+      </div>
+    </div>
+    <br>
+  </div>
+<% end %>
+
+<%= render 'template' %>

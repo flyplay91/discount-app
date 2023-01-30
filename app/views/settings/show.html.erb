@@ -1,0 +1,357 @@
+<h1>Settings</h1>
+
+<%= form_for @shop, url: '/settings' do |f| %>
+  <div class="card">
+    <div class="card-body">
+      <h4>Purchase Order Email Settings</h4>
+      <div class="row">
+        <div class="col-12 col-sm-6">
+          <%= f.label :from_email, 'From Email' %>
+          <%= f.text_field :from_email, class: 'form-control' %>
+        </div>
+        <div class="col-12 col-sm-6">
+          <%= f.label :from_name, 'From Name' %>
+          <%= f.text_field :from_name, class: 'form-control' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-12 col-sm-6">
+          <%= f.label :bcc_email, 'BCC Email' %>
+          <%= f.text_field :bcc_email, class: 'form-control' %>
+        </div>
+        <div class="col-12 col-sm-6">
+          <%= f.label :bcc_name, 'BCC Name' %>
+          <%= f.text_field :bcc_name, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Processing Fee</h4>
+      <div class="row">
+        <div class="col-sm-6">
+          <%= f.label :processing_fee do %>
+            <span>Processing Fee Amount(</span>
+            <span style="color: red;" id="processing-fee-amount">$<%= f.object.processing_fee %></span>
+            <span>)</span>
+          <% end %>
+          <%= f.number_field :processing_fee, class: 'form-control', step: "0.01" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Drop Ship Fee</h4>
+      <div class="card-section">
+        <div class="row">
+          <div class="col-12 col-sm-6">
+            <%= f.label :dropship_fee_charge do %>
+              <span>Drop Ship Fee(</span>
+              <span style="color: red;" id="dropship-fee-charge-amount">$<%= f.object.dropship_fee_charge %></span>
+              <span>)</span>
+            <% end %>
+            <%= f.number_field :dropship_fee_charge, class: 'form-control', step: "0.01" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Tax Rate</h4>
+      <div class="card-section">
+        <div class="row">
+          <div class="col-12 col-sm-6">
+            <%= f.label :tax_rate do %>
+              <span>State Tax Collected Per Product(</span>
+              <span style="color: red;" id="tax-rate-amount"><%= f.object.tax_rate %>%</span>
+              <span>)</span>
+            <% end %>
+            <%= f.number_field :tax_rate, class: 'form-control', step: "0.01" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Staff / Rep Accounts</h4>
+      <div class="card-section">
+        <% f.object.staff_accounts.each_with_index do |staff_account, index| %>
+          <div class="row" style="align-items: center; margin-bottom: 15px;">
+            <div class="col-sm-5">
+              <%= label_tag "shop_staff_account_email_#{index}", 'Email' %>
+              <%= email_field_tag 'shop[staff_accounts][][email]',
+                staff_account[:email], class: 'form-control',
+                id: "shop_staff_account_email_#{index}", required: true %>
+            </div>
+            <div class="col-sm-5">
+              <%= label_tag "shop_staff_account_name_#{index}", 'Name' %>
+              <%= text_field_tag 'shop[staff_accounts][][name]',
+                staff_account[:name], class: 'form-control',
+                id: "shop_staff_account_name_#{index}", required: true %>
+            </div>
+            <div class="col-sm-2">
+              <i class="bi bi-trash"></i>
+            </div>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-12">
+            <span id="add-staff-account" class="btn btn-primary">Add Staff Account</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+
+  <div class="card">
+    <div class="card-body">
+      <h4>Default Agent</h4>
+      <div class="card-section">
+        <% default_agent = f.object.default_agents[0] || {} %>
+        <div class="row" style="align-items: center; margin-bottom: 15px;">
+          <div class="col-sm-5">
+            <%= label_tag "shop_default_agent_email_0", 'Email' %>
+            <%= email_field_tag 'shop[default_agents][][email]',
+              default_agent[:email], class: 'form-control',
+              id: "shop_default_agent_email_0", required: true %>
+          </div>
+          <div class="col-sm-5">
+            <%= label_tag "shop_default_agent_name_0", 'Name' %>
+            <%= text_field_tag 'shop[default_agents][][name]',
+              default_agent[:name], class: 'form-control',
+              id: "shop_default_agent_name_0", required: true %>
+          </div>
+        </div>
+        <% f.object.default_agents.each_with_index do |default_agent, index| %>
+          <% next if index == 0 %>
+          <div class="row" style="align-items: center; margin-bottom: 15px;">
+            <div class="col-sm-5">
+              <%= label_tag "shop_default_agent_email_#{index}", 'Email' %>
+              <%= email_field_tag 'shop[default_agents][][email]',
+                default_agent[:email], class: 'form-control',
+                id: "shop_default_agent_email_#{index}", required: true %>
+            </div>
+            <div class="col-sm-5">
+              <%= label_tag "shop_default_agent_name_#{index}", 'Name' %>
+              <%= text_field_tag 'shop[default_agents][][name]',
+                default_agent[:name], class: 'form-control',
+                id: "shop_default_agent_name_#{index}", required: true %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <br>
+
+  <div class="card">
+    <div class="card-body">
+      <h4>Status Settings</h4>
+      <h6>Draft Order Status</h6>
+      <div class="card-section">
+        <% f.object.draft_order_statuses.each_with_index do |draft_order_status, index| %>
+          <div class="row" style="align-items: center; margin-bottom: 15px;">
+            <div class="col-sm-6">
+              <%= f.text_field :draft_order_statuses, value: draft_order_status, multiple: true,
+                id: "shop_draft_order_statuses_#{index}", class: 'form-control' %>
+            </div>
+            <div class="col-sm-6">
+              <i class="bi bi-trash"></i>
+            </div>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-12">
+            <span id="add-draft-order-status" class="btn btn-primary">Add Draft Order Status</span>
+          </div>
+        </div>
+      </div>
+      <br>
+      <h6>Purchase Order Status</h6>
+      <div class="card-section">
+        <% f.object.purchase_order_statuses.each_with_index do |purchase_order_status, index| %>
+          <div class="row" style="align-items: center; margin-bottom: 15px;">
+            <div class="col-sm-6">
+              <%= f.text_field :purchase_order_statuses, value: purchase_order_status, multiple: true,
+                id: "shop_purchase_order_statuses_#{index}", class: 'form-control' %>
+            </div>
+            <div class="col-sm-6">
+              <i class="bi bi-trash"></i>
+            </div>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-12">
+            <span id="add-purchase-order-status" class="btn btn-primary">Add Purchase Order Status</span>
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <h6>Purchase Order Stage</h6>
+      <div class="card-section">
+        <% f.object.purchase_order_stages.each_with_index do |purchase_order_stage, index| %>
+          <div class="row" style="align-items: center; margin-bottom: 15px;">
+            <div class="col-sm-6">
+              <%= f.text_field :purchase_order_stages, value: purchase_order_stage, multiple: true,
+                id: "shop_purchase_order_stages_#{index}", class: 'form-control' %>
+            </div>
+            <div class="col-sm-6">
+              <i class="bi bi-trash"></i>
+            </div>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-12">
+            <span id="add-purchase-order-stage" class="btn btn-primary">Add Purchase Order Stage</span>
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <h6>Purchase Order Next Action</h6>
+      <div class="card-section">
+        <% f.object.purchase_order_next_actions.each_with_index do |purchase_order_next_action, index| %>
+          <div class="row" style="align-items: center; margin-bottom: 15px;">
+            <div class="col-sm-6">
+              <%= f.text_field :purchase_order_next_actions, value: purchase_order_next_action, multiple: true,
+                id: "shop_purchase_order_next_actions_#{index}", class: 'form-control' %>
+            </div>
+            <div class="col-sm-6">
+              <i class="bi bi-trash"></i>
+            </div>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-12">
+            <span id="add-purchase-order-next-action" class="btn btn-primary">Add Purchase Order Next Action</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Categories</h4>
+      <div class="card-section">
+        <% f.object.categories.each_with_index do |category, index| %>
+          <div class="row" style="align-items: center; margin-bottom: 15px;">
+            <div class="col-sm-6">
+              <%= f.text_field :categories, value: category, multiple: true,
+                id: "shop_categories_#{index}", class: 'form-control' %>
+            </div>
+            <div class="col-sm-6">
+              <i class="bi bi-trash"></i>
+            </div>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-12">
+            <span id="add-category" class="btn btn-primary">Add Category</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Cart Page Descriptions</h4>
+      <div class="card-section">
+        <div class="row">
+          <div class="col-12">
+            <%= f.label :customer_info_description, 'Customer Information Description' %>
+            <%= f.text_field :customer_info_description, class: 'form-control' %>
+          </div>
+          <div class="col-12">
+            <br>
+            <%= f.label :shipping_details_description, 'Shipping Details Description' %>
+            <%= f.text_field :shipping_details_description, class: 'form-control' %>
+          </div>
+
+          <div class="col-12">
+            <br>
+            <%= f.label :single_address_description, 'Single Address Description' %>
+            <%= f.text_field :single_address_description, class: 'form-control' %>
+          </div>
+          <div class="col-12">
+            <br>
+            <%= f.label :dropship_address_description, 'Drop Ship Address Description' %>
+            <%= f.text_field :dropship_address_description, class: 'form-control' %>
+          </div>
+
+          <div class="col-12">
+            <br>
+            <%= f.label :dropship_noaddress_description, 'Drop Ship Number of Addresses Description' %>
+            <%= f.text_field :dropship_noaddress_description, class: 'form-control' %>
+          </div>
+          <div class="col-12">
+            <br>
+            <%= f.label :address_attachment_type_description, 'Address Attachment Description' %>
+            <%= f.text_field :address_attachment_type_description, class: 'form-control' %>
+          </div>
+
+          <div class="col-12">
+            <br>
+            <%= f.label :delivery_needed_by_date_description, 'Delivery Needed By Date' %>
+            <%= f.text_field :delivery_needed_by_date_description, class: 'form-control' %>
+          </div>
+          <div class="col-12">
+            <br>
+            <%= f.label :terms_and_conditions, 'Terms and Conditions' %>
+            <%= f.text_field :terms_and_conditions, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Disclaimers</h4>
+      <div class="card-section">
+        <div class="row">
+          <div class="col-12">
+            <%= f.text_area :disclaimers, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Collections to show Business Filter</h4>
+      <div class="card-section">
+        <div class="row">
+          <div class="col-12">
+            <label for="shop_filter_collections">Comma separated shopify collection ids</label>
+            <%= f.text_area :filter_collections, class: 'form-control', placeholder: "Comma separated Shopify collection ids" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <%= f.submit 'Save' %>
+<% end %>
+
+<%= render 'template' %>
+
+<style>
+  .card-body .card-section .row:first-child .bi-trash {
+    display: none;
+  }
+</style>

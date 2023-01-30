@@ -1,0 +1,18 @@
+.modal.fade#productsModal{ tabindex: "-1", "aria-labelledby": "productsModalLabel", "aria-hidden": "true"}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title#productsModalLabel Add products
+        %button.close{ type: "button", "data-dismiss": "modal", "aria-label": "Close"}
+          %span{ "aria-hidden": "true" } &times;
+        
+      .modal-body
+        %input#search_products{placeholder: "Search products"}
+        %ul#search_results
+      .modal-footer.justify-content-between
+        %span
+          %span#selected_count 0
+          products selected
+        %div
+          %button.btn.btn-secondary{ type: "button", "data-dismiss": "modal"} Close
+          %button#add-product.btn.btn-primary{type: "button"} Add

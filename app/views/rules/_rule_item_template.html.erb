@@ -1,0 +1,56 @@
+<template id="rule-item-template">
+  <input type="hidden" class="shopify-id"
+  name="rule[rule_items_attributes][NESTED_ID][shopify_id]">
+  <input type="hidden" class="shopify-type"
+  name="rule[rule_items_attributes][NESTED_ID][shopify_type]">
+  <input type="hidden" class="name-1"
+  name="rule[rule_items_attributes][NESTED_ID][name_1]">
+  <input type="hidden" class="name-2"
+  name="rule[rule_items_attributes][NESTED_ID][name_2]">
+</template>
+
+<template id="condition-template">
+  <div class="row condition-item">
+    <div class="col-12 col-md-6">
+      <div class="form-group">
+        <select class="form-control" name="rule[conditions_attributes][NESTED_ID][condition_type]">
+          <option value="vendor">Product Vendor</option>
+          <option value="type">Product Type</option>
+          <option value="tag">Product Tag</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="form-group d-flex align-items-center justify-content-between">
+        <input placeholder="Type Here" class="form-control" type="text"
+          name="rule[conditions_attributes][NESTED_ID][condition_str]">
+        <i class="bi bi-trash"></i>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="price-level-template">
+  <tr>
+    <td>
+      <input class="form-control" min="1" type="number"
+        name="rule[price_levels_attributes][NESTED_ID][break_number]">
+    </td>
+    <td>
+      <div class="input-group discount_price_group">
+        <input class="discount_price form-control discount" min="1" type="number"
+          name="rule[price_levels_attributes][NESTED_ID][discount_amount]">
+        <div class="input-group-addon">
+          <select class="form-control discount"
+            name="rule[price_levels_attributes][NESTED_ID][discount_type]">
+            <option value="price_discount">USD (Price Discount)</option>
+            <option value="fixed_price">USD (Fixed Price)</option>
+            <option value="percent_discount">% Off</option>
+          </select>
+        </div>
+      </div>
+    </td>
+    <td><i class="bi bi-trash"></i></td>
+    <td></td>
+  </tr>
+</template>

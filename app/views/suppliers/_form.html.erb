@@ -1,0 +1,567 @@
+<%
+  url = if @vendor.new_record?
+    suppliers_path
+  else
+    supplier_path @vendor
+  end
+%>
+<%= form_for @vendor, url: url do |f| %>
+  <div class="card">
+    <div class="card-body">
+      <h4>Company Information</h4>
+      <div class="row">
+        <div class="col-12 col-md-5">
+          <%= f.label :vendor_type %>
+          <%= f.select :vendor_type,
+            options_for_select(
+              [
+                'Supplier',
+                'Decorator'
+              ], f.object.vendor_type
+            ), {}, class: 'form-control' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-6">
+          <%= f.label :company_name, 'Company Name' %>
+          <%= f.text_field :company_name, class: 'form-control', required: true %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-6">
+          <%= f.label :company_address_line_1, 'Address' %>
+          <%= f.text_field :company_address_line_1, class: 'form-control' %>
+        </div>
+        <div class="col-sm-6">
+          <%= f.label :company_address_line_2, 'Address Line 2' %>
+          <%= f.text_field :company_address_line_2, class: 'form-control' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :company_address_city, 'City' %>
+          <%= f.text_field :company_address_city, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :company_address_state, 'State' %>
+          <%= f.text_field :company_address_state, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :company_address_zipcode, 'Zip Code' %>
+          <%= f.text_field :company_address_zipcode, class: 'form-control' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-6">
+          <%= f.label :website %>
+          <%= f.text_field :website, class: 'form-control' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <%= f.label :company_type, 'Company Type' %>
+          <%= f.select :company_type,
+            options_for_select(
+              [
+                'ASI',
+                'Retail',
+                'Other'
+              ], f.object.company_type
+            ), {}, class: 'form-control' %>
+        </div>
+        <div class="col-12 col-md-6">
+          <br>
+          <%= f.text_field :company_type_custom,
+            class: "form-control #{'d-none' unless f.object.company_type == 'Other'}" %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-6">
+          <%= f.label :company_contact_email, 'Company Contact Email' %>
+          <%= f.email_field :company_contact_email, class: 'form-control' %>
+        </div>
+        <div class="col-sm-6">
+          <%= f.label :custom_service_phone_number, 'Custom Service Phone Number' %>
+          <%= f.text_field :custom_service_phone_number, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div id="sub-brands" class="card">
+    <div class="card-body">
+      <h4>Brands</h4>
+      <div class="card-section">
+        <% f.object.sub_brands.each_with_index do |sub_brand, index| %>
+          <div class="row" style="align-items: center; margin-bottom: 15px;">
+            <div class="col-sm-6">
+              <%= f.text_field :sub_brands, value: sub_brand, multiple: true,
+                id: "vendor_sub_brands_#{index}", class: 'form-control' %>
+            </div>
+            <div class="col-sm-6">
+              <i class="bi bi-trash"></i>
+            </div>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-12">
+            <span id="add-sub-brand" class="btn btn-primary">Add Brand</span>
+          </div>
+        </div>
+      </div>
+      <br>
+      <h4>Supplier Categories</h4>
+      <div class="card-section">
+        <% f.object.categories.each_with_index do |category, index| %>
+          <div class="row" style="align-items: center; margin-bottom: 15px;">
+            <div class="col-sm-6">
+              <%= select_tag 'vendor[categories][]', options_for_select(Shop.first.categories, category),
+                include_blank: true, class: 'form-control', id: "vendor_categories_#{index}" %>
+            </div>
+            <div class="col-sm-6">
+              <i class="bi bi-trash"></i>
+            </div>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-12">
+            <span id="add-sub-category" class="btn btn-primary">Add Category</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Production Contact</h4>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :product_contact_name, 'Production Contact Name' %>
+          <%= f.text_field :product_contact_name, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :product_phone_number, 'Production Contact Phone Number' %>
+          <%= f.text_field :product_phone_number, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :product_contact_email, 'Production Contact Email' %>
+          <%= f.email_field :product_contact_email, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Billing Contact</h4>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :billing_contact_name, 'Billing Contact Name' %>
+          <%= f.text_field :billing_contact_name, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :billing_contact_phone_number, 'Billing Contact Phone Number' %>
+          <%= f.text_field :billing_contact_phone_number, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :billing_contact_email, 'Billing Contact Email' %>
+          <%= f.email_field :billing_contact_email, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Assigned Agent</h4>
+      <div class="row">
+        <div class="col-sm-6">
+          <%= f.label :assigned_agent, 'Staff / Rep' %>
+          <%= f.select :assigned_agent,
+            options_for_select(
+              Shop.first.formatted_staff_accounts,
+              f.object.assigned_agent
+            ), {include_blank: true}, class: 'form-control' %>
+        </div>
+        <%= f.hidden_field :assigned_agent_name %>
+        <%= f.hidden_field :assigned_agent_email %>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Payment Terms</h4>
+      <div class="row">
+        <div class="col-sm-6">
+          <%= f.label :net_payment_terms, 'Net Terms' %>
+          <%= f.select :net_payment_terms,
+            options_for_select(
+              [
+                ['Net20', 'net_terms_net20'],
+                ['Net30', 'net_terms_net30'],
+                ['Net45', 'net_terms_net45'],
+                ['Net60', 'net_terms_net60'],
+                ['Net90', 'net_terms_net90'],
+                ['Net120', 'net_terms_net120'],
+                ['Custom', 'net_terms_custom']
+              ], f.object.net_payment_terms
+            ), {}, class: 'form-control' %>
+        </div>
+        <div id="net-terms-custom" class="col-sm-6 <%= 'd-none' unless f.object.net_terms_custom? %>">
+          <%= f.label :net_terms_custom, 'Custom Net Term' %>
+          <%= f.select :net_terms_custom,
+            options_for_select(
+              [
+                '100% Prepayment at Order',
+                '50% Prepayment at order / 50% Prepayment at ship',
+                'Other'
+              ], f.object.net_terms_custom
+            ), {}, class: 'form-control' %>
+          <br>
+          <%= f.label :custom_net_term_description, 'Custom Net Term Description' %>
+          <%= f.text_field :custom_net_term_description,
+            class: "form-control" %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-12 col-md-5">
+          <%= f.label :pricing_status, 'Pricing Status' %>
+          <%= f.select :pricing_status,
+            options_for_select(
+              [
+                'EQP',
+                'Other'
+              ], f.object.pricing_status
+            ), {}, class: 'form-control' %>
+        </div>
+        <div class="col-12 col-md-7">
+          <br>
+          <%= f.text_field :pricing_status_other,
+            class: "form-control #{'d-none' unless f.object.pricing_status == 'Other'}" %>
+        </div>
+      </div>
+      <br>
+      <div class="card">
+        <div class="card-body">
+          <h5>Payment Methods</h5>
+          <div class="row">
+            <div class="col-sm-5">
+              <%= f.check_box :payment_methods_check %>
+              <%= f.label :payment_methods_check, 'Check' %>
+              (<label><%= f.radio_button :payment_primary, 'payment_methods_check',
+                checked: (f.object.payment_primary == 'payment_methods_check') %>&nbsp;Preferred</label>)
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-5">
+              <%= f.check_box :payment_methods_cc %>
+              <%= f.label :payment_methods_cc do %>
+                Credit Card
+                <span id="payment-methods-cc-value" style="color: red;">
+                  <%= f.object.cc_fee_label %>
+                </span>
+              <% end %>
+              (<label><%= f.radio_button :payment_primary, 'payment_methods_cc',
+                checked: (f.object.payment_primary == 'payment_methods_cc') %>&nbsp;Preferred</label>)
+            </div>
+            <div class="col-sm-7">
+              <div id="payment-methods-cc" class="row <%= 'd-none' unless f.object.payment_methods_cc? %>">
+                <div class="col-sm-6">
+                  <%= f.select :payment_methods_cc_type,
+                    options_for_select(
+                      [
+                        ['$ (Dollar Amount)', 'fee'],
+                        ['% (Percentage Amount)', 'percentage']
+                      ], f.object.payment_methods_cc_type
+                    ), {}, class: 'form-control' %>
+                </div>
+                <div class="col-sm-6">
+                  <%= f.number_field :payment_methods_cc_fees, class: 'form-control', step: 0.01 %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-5">
+              <%= f.check_box :payment_methods_ach %>
+              <%= f.label :payment_methods_ach, 'ACH' %>
+              (<label><%= f.radio_button :payment_primary, 'payment_methods_ach',
+                checked: (f.object.payment_primary == 'payment_methods_ach') %>&nbsp;Preferred</label>)
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-5">
+              <%= f.check_box :payment_methods_custom %>
+              <%= f.label :payment_methods_custom, 'Custom' %>
+              (<label><%= f.radio_button :payment_primary, 'payment_methods_custom',
+                checked: (f.object.payment_primary == 'payment_methods_custom') %>&nbsp;Preferred</label>)
+            </div>
+            <div class="col-sm-7">
+              <div id="payment-methods-custom" class="<%= 'd-none' unless f.object.payment_methods_cc? %>">
+                <%= f.text_field :payment_methods_custom_field, class: 'form-control' %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-6">
+          <%= f.label :payment_notes, 'Payment Notes' %>
+          <%= f.text_area :payment_notes, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Ordering Terms</h4>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :order_submission_type, 'Preffered Order Submission Type' %>
+          <%= f.select :order_submission_type,
+            options_for_select(
+              [
+                ['Portal', 'order_submission_portal'],
+                ['Email', 'order_submission_email'],
+                ['Other', 'order_submission_other']
+              ], f.object.order_submission_type
+            ), {}, class: 'form-control' %>
+        </div>
+        <div class="col-sm-8">
+          <div id="order-submission-portal" class="<%#= 'd-none' unless f.object.order_submission_portal? %>">
+            <br>
+            <%= f.label :order_submission_portal_link, 'Order Submission Portal Link' %>
+            <%= f.text_field :order_submission_portal_link, class: 'form-control' %>
+            <br>
+            <%= f.label :order_submission_portal_login, 'Order Submission Portal Login' %>
+            <%= f.text_field :order_submission_portal_login, class: 'form-control' %>
+            <br>
+            <%= f.label :order_submission_portal_password, 'Order Submission Portal Password' %>
+            <%= f.text_field :order_submission_portal_password, class: 'form-control' %>
+          </div>
+          <div id="order-submission-email" class="<%#= 'd-none' unless f.object.order_submission_email? %>">
+            <div class="row">
+              <div class="col-sm-4">
+                <br>
+                <%= f.label :po_emails, 'Order Email (Primary)',
+                  for: "vendor_po_emails_0" %>
+                <%= f.email_field :po_emails, value: f.object.po_emails[0], multiple: true,
+                  id: "vendor_po_emails_0", class: 'form-control' %>
+              </div>
+              <div class="col-sm-4">
+                <br>
+                <%= f.label :po_emails, 'Order Email (2nd)',
+                  for: "vendor_po_emails_1" %>
+                <%= f.email_field :po_emails, value: f.object.po_emails[1], multiple: true,
+                  id: "vendor_po_emails_1", class: 'form-control' %>
+              </div>
+              <div class="col-sm-4">
+                <br>
+                <%= f.label :po_emails, 'Order Email (3rd)',
+                  for: "vendor_po_emails_2" %>
+                <%= f.email_field :po_emails, value: f.object.po_emails[2], multiple: true,
+                  id: "vendor_po_emails_2", class: 'form-control' %>
+              </div>
+            </div>
+          </div>
+          <div id="order-submission-comment" class="<%#= 'd-none' unless f.object.order_submission_other? %>">
+            <br>
+            <%= f.label :order_submission_comment, 'Order Submission Comment' %>
+            <%= f.text_field :order_submission_comment, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+      <br>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Shipping Information</h4>
+      <div class="row">
+        <div class="col-12 col-sm-6">
+          <%= f.label :shipping_notes %>
+          <%= f.text_area :shipping_notes, class: 'form-control' %>
+        </div>
+        <div class="col-12 col-sm-6">
+          <%= f.check_box :international_supplier %>
+          <%= f.label :international_supplier, "International Supplier" %>
+          <br>
+          <%= f.check_box :third_shipping %>
+          <%= f.label :third_shipping, 'Accepts 3rd Party Shipping' %>
+        </div>
+        <div class="col-12" id="vendor_third_shipping_fee_section">
+          <br>
+          <%= f.label :third_party_shipping_fee_type, '3rd Party Shipping Fee Type' %>
+          <%= f.select :third_party_shipping_fee_type,
+            options_for_select(
+              [
+                ['Per Item', 'per_item'],
+                ['Per Order', 'per_order'],
+                ['Per Box', 'per_box']
+              ], f.object.third_party_shipping_fee_type
+            ), {}, class: 'form-control' %>
+          <br>
+          <%= f.label :third_shipping_fee do %>
+            3rd Party Shipping Fee
+            <span id="third_shipping_fee-value" style="color: red;">
+              <%= f.object.third_shipping_fee_label %>
+            </span>
+          <% end %>
+          <%= f.number_field :third_shipping_fee, step: "0.01", class: "form-control" %>
+        </div>
+        <div class="col-12">
+          <br>
+          <%= f.label :dropship_fee_per_item_per_location do %>
+            Drop Ship Fee Per
+            <%= f.select :dropship_unit_type,
+            options_for_select(
+              [
+                ['Item', 'item'],
+                ['Box', 'box'],
+                ['Order', 'order']
+              ], f.object.dropship_unit_type
+            ), {} %>
+            Per Location
+            <span id="dropship_fee_per_item_per_location-value" style="color: red;">
+              <%= f.object.dropship_fee_per_item_per_location_label %>
+            </span>
+          <% end %>
+          <%= f.number_field :dropship_fee_per_item_per_location, step: "0.01", class: "form-control" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Lead Time Settings</h4>
+      <div id="lead-time-settings">
+        <%= f.fields_for :lead_times, @vendor.lead_times do |fl| %>
+          <div class="row lead-time-row">
+            <div class="col-12 col-sm-12">
+              <div class="lead-time">
+                <div class="lead-time-item">
+                  <h5>Product Quantity</h5>
+                  <div style="margin-right: 15px;">
+                    <%= fl.label :min_qty, 'Min' %>
+                    <%= fl.number_field :min_qty, class: 'form-control' %>
+                  </div>
+                  <div>
+                    <%= fl.label :max_qty, 'Max' %>
+                    <%= fl.number_field :max_qty, class: 'form-control' %>
+                  </div>
+                </div>
+                <div class="lead-time-item">
+                  <h5>Range of Time</h5>
+                  <div style="margin-right: 15px;">
+                    <%= fl.label :min_days, 'Min' %>
+                    <%= fl.number_field :min_days, class: 'form-control' %>
+                  </div>
+                  <div>
+                    <%= fl.label :max_days, 'Max' %>
+                    <%= fl.number_field :max_days, class: 'form-control' %>
+                  </div>
+                </div>
+                <div class="lead-time-item">
+                  <h5>Business Days, Days or Weeks</h5>
+                  <div>
+                    <label>&nbsp;</label>
+                    <%= fl.select :period_type,
+                      options_for_select(
+                        [
+                          ['Business Days', 'business_days'],
+                          ['Days', 'days'],
+                          ['Weeks', 'weeks']
+                        ], fl.object.period_type
+                      ), { include_blank: true }, class: 'form-control' %>
+                  </div>
+                </div>
+                <i class="bi bi-trash"></i>
+              </div>
+            </div>
+            <% if fl.object.persisted? %>
+              <%= fl.hidden_field :id %>
+              <%= fl.hidden_field :_destroy, class: 'destroy' %>
+            <% end %>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-12">
+            <span id="add-lead-time" class="btn btn-primary">Add Lead Time</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="card">
+    <div class="card-body">
+      <h4>Misc</h4>
+      <div class="row">
+        <div class="col-sm-6">
+          <%= f.label :private_notes %>
+          <%= f.text_area :private_notes, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <%= f.submit 'Save Changes' %>
+<% end %>
+
+<%= render 'template' %>
+
+<style type="text/css">
+  h4 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+
+  .lead-time-item {
+    /*display: flex;*/
+    padding: 10px 15px;
+    margin-right: 15px;
+    border: 1px solid #ccc;
+  }
+
+  .lead-time-item > div {
+    display: inline-block;
+  }
+
+  .lead-time-item h5 {
+    font-size: 1.1rem;
+  }
+
+  .lead-time {
+    display: flex;
+    position: relative;
+  }
+
+  .lead-time .bi-trash {
+    position: absolute;
+    right: 0;
+  }
+
+  #lead-time-settings .row:first-child .bi-trash {
+    display: none;
+  }
+
+  .lead-time-row {
+    margin-bottom: 15px;
+  }
+</style>

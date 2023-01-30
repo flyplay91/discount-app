@@ -1,0 +1,31 @@
+.d-flex.justify-content-end
+  =link_to "Add New", new_rule_path, class: "d-block d-md-inline-block btn btn-primary"
+%hr
+
+- if @rules.present?
+  %table.table.table-striped
+    %thead.thead-dark
+      %tr
+        %th{scope: "col"} Rule Name
+        %th{scope: "col"} Rule Type
+        %th{scope: "col"} Action
+        %th{scope: "col"} Status
+    %tbody
+      - @rules.each do |rule|
+        %tr
+          %td= rule.name
+          %td= rule.rule_type
+          %td
+            .action-buttons.d-inline-flex.align-items-center
+              = link_to edit_rule_path(rule) do
+                %i.bi.bi-pencil
+              %i.bi.bi-stickies.d-none
+              = link_to rule_path(rule), method: :delete,
+                data: { confirm: 'Are you sure to delete?' }, style: 'color: #dc3545;' do
+                %i.bi.bi-trash
+          %td
+            %input{ type: "checkbox", checked: (true if rule.status), disabled: true}
+- else
+  No rules
+
+= will_paginate @products, :params => {:page => params[:page]}

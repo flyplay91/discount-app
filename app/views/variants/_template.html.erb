@@ -1,0 +1,102 @@
+<template id="vendor-profile-template">
+  <div class="row vendor-profile">
+    <div class="col-sm-5">
+      <label for="variant_vendor_ids_NESTED_ID">Vendor Profile</label>
+      <select name="variant[vendor_ids][]" id="variant_vendor_ids_NESTED_ID" class="form-control">
+        <option value="" label=" "></option>
+        <% Vendor.all.each do |vendor| %>
+          <option value="<%= vendor.id %>" label="<%= vendor.company_name %>"></option>
+        <% end %>
+      </select>
+    </div>
+    <div class="col-sm-5">
+      <label for="variant_vender_sub_brands_NESTED_ID">Vendor Sub Brand</label>
+      <select name="variant[vender_sub_brands][]" id="variant_vender_sub_brands_NESTED_ID" class="form-control">
+        <option value=""></option>
+      </select>
+    </div>
+    <div class="col-sm-2">
+      <i class="bi bi-trash"></i>
+    </div>
+  </div>
+</template>
+
+
+<template id="price-level-template">
+  <div class="card price-level">
+    <div class="card-body">
+      <h5>Price Level</h5>
+      <i class="bi bi-trash"></i>
+      
+      <div class="row">
+        <div class="col-sm-6">
+          <label for="variant_price_levels_attributes_NESTED_ID_item_qty">Quantity</label>
+          <input class="form-control" type="number"
+            name="variant[price_levels_attributes][NESTED_ID][item_qty]"
+            id="variant_price_levels_attributes_NESTED_ID_item_qty">
+        </div>
+        <div class="col-sm-6">
+          <label for="variant_price_levels_attributes_NESTED_ID_item_wholesale_cost" data-label="Total Cost per Item">Total Cost per Item</label>
+          <input class="form-control whole-sale-cost cost" type="number"
+            name="variant[price_levels_attributes][NESTED_ID][item_wholesale_cost]"
+            id="variant_price_levels_attributes_NESTED_ID_item_wholesale_cost" step="0.01">
+        </div>
+      </div>
+      <br>
+      <% unless @variant.single_supplier? %>
+        <div class="row">
+          <div class="col-sm-6">
+            <label for="variant_price_levels_attributes_NESTED_ID_supplier_cost" data-label="Supplier Cost per Item">Supplier Cost per Item</label>
+            <input class="form-control cost" type="number" value="" name="variant[price_levels_attributes][NESTED_ID][supplier_cost]" id="variant_price_levels_attributes_NESTED_ID_supplier_cost">
+          </div>
+          <div class="col-sm-6 ">
+            <label for="variant_price_levels_attributes_NESTED_ID_decorator_cost" data-label="Decorator Cost per Item">Decorator Cost per Item</label>
+            <input class="form-control whole-sale-cost cost" step="0.01" type="number" value="" name="variant[price_levels_attributes][NESTED_ID][decorator_cost]" id="variant_price_levels_attributes_NESTED_ID_decorator_cost">
+          </div>
+        </div>
+        <br>
+      <% end %>
+      <div class="row">
+        <div class="col-sm-6 d-none">
+          <label for="variant_price_levels_attributes_NESTED_ID_sale_price_quantity">Sale Price Per Quantity</label>
+          <input class="form-control" type="number" value="" name="variant[price_levels_attributes][NESTED_ID][sale_price_quantity]" id="variant_price_levels_attributes_NESTED_ID_sale_price_quantity">
+        </div>
+        <div class="col-sm-6">
+          <label for="variant_price_levels_attributes_NESTED_ID_item_sale_price" data-label="Sale Price per Item">Sale Price per Item</label>
+          <input class="form-control whole-sale-cost cost" step="0.01" type="number" value="" name="variant[price_levels_attributes][NESTED_ID][item_sale_price]" id="variant_price_levels_attributes_NESTED_ID_item_sale_price">
+        </div>
+      </div>
+      <div class="row d-none">
+        <div class="col-sm-6">
+          <label for="variant_price_levels_attributes_NESTED_ID_item_markup_type">
+            Item Markup Type
+          </label>
+          <select class="form-control markup-type"
+            name="variant[price_levels_attributes][NESTED_ID][item_markup_type]"
+            id="variant_price_levels_attributes_NESTED_ID_item_markup_type">
+            <option selected="selected" value="fixed_markup">Fixed Markup</option>
+            <option value="percent_markup">Percent Markup</option>
+          </select>
+        </div>
+        <div class="col-sm-6">
+          <label for="variant_price_levels_attributes_NESTED_ID_item_markup_cost">
+            Item Markup Cost
+          </label>
+          <input class="form-control markup-cost" type="number"
+            name="variant[price_levels_attributes][NESTED_ID][item_markup_cost]"
+            id="variant_price_levels_attributes_NESTED_ID_item_markup_cost">
+        </div>
+      </div>
+      <br>
+      <div class="row d-none">
+        <div class="col-sm-12">
+          <p>
+            Total Cost Per Item: 
+            <b class="item-markup-total"></b>
+          </p>
+        </div>
+      </div>
+    </div>
+    <input type="hidden" value="<%= @product.id %>" name="variant[price_levels_attributes][NESTED_ID][product_id]">
+  </div>
+</template>

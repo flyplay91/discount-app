@@ -1,0 +1,8 @@
+%h1 Installation
+- if @themes.present?
+	%p Please select a theme
+	%select
+		%option{value: "#{@themes&.last&.id}"}= @themes&.last&.name
+		- @themes.each_with_index do |theme, index|
+			- next if index == @themes.size - 1
+			%option{value: "#{theme.id}"}= theme.name

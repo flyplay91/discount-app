@@ -1,0 +1,96 @@
+<div class="modal fade" id="uploadModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadModalLabel">
+          Upload Variants
+        </h5>
+        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table>
+        <thead>
+          <th>Shopify ID</th>
+          <th>Title</th>
+          <th>Supplier Type</th>
+          <th>Suppliers</th>
+          <th>Production Details</th>
+          <th>Pricing</th>
+        </thead>
+        <tbody>
+          <% @json_variants.each do |json_variant| %>
+            <tr>
+              <td><%= json_variant['shopify_id'] %></td>
+              <td></td>
+              <td><%= json_variant['supplier_type'] %></td>
+              <td>
+                <% json_variant['suppliers'].each do |supplier| %>
+                  <div style="border: 1px solid #ccc; margin-bottom: 5px;">
+                    <p>Name: <%= supplier['name'] %></p>
+                    <p>Brand: <%= supplier['brand'] %></p>
+                    <p>Type: <%= supplier['type'] %></p>
+                  </div>
+                <% end %>
+              </td>
+              <td>
+                <p>Variant Size: <%= json_variant['production_details']['size'] %></p>
+                <p>Variant Color: <%= json_variant['production_details']['color'] %></p>
+                <p>Supplier Product Name: <%= json_variant['production_details']['supplier_product_name'] %></p>
+                <p>Supplier SKU: <%= json_variant['production_details']['supplier_sku'] %></p>
+                <p>One Time Setup Fee: <%= json_variant['production_details']['one_time_setup_fee'] %></p>
+                <p>Recurring/Re-Order Fee: <%= json_variant['production_details']['recurring_reorder_fee'] %></p>
+                <p>Quote Number: <%= json_variant['production_details']['quote_number'] %></p>
+                <p>Supplier Proof Link: <%= json_variant['production_details']['supplier_proof_link'] %></p>
+                <p>Proof Photo Link: <%= json_variant['production_details']['proof_photo_link'] %></p>
+                <p>Artwork/Vector Logo URL: <%= json_variant['production_details']['artwork_url'] %></p>
+                <p>Decoration Location: <%= json_variant['production_details']['decoration_location'] %></p>
+                <p>Decoration Type: <%= json_variant['production_details']['decoration_type'] %></p>
+                <p>Logo Name: <%= json_variant['production_details']['logo_name'] %></p>
+                <p>Logo Color: <%= json_variant['production_details']['logo_color'] %></p>
+                <p>Logo Size: <%= json_variant['production_details']['logo_size'] %></p>
+                <p>Inventory on Hand: <%= json_variant['production_details']['inventory_on_hand'] %></p>
+                <p>Enforced Multiple Quantity: <%= json_variant['production_details']['enforced_multiple_quantity'] %></p>
+                <p>Base Lead Time: <%= json_variant['production_details']['base_lead_time'] %></p>
+                <p>Start Production: <%= json_variant['production_details']['start_production'] %></p>
+                <p>Lead Time in Days: <%= json_variant['production_details']['lead_time_in_days'] %></p>
+                <p>Additional Lead Time: <%= json_variant['production_details']['additional_lead_time'] %></p>
+                <p>Different cost based on quantity: <%= json_variant['production_details']['different_cost_based_on_quantity'] %></p>
+                <p>Ship To: <%= json_variant['production_details']['ship_to'] %></p>
+                <p>Supplier Decoration or Blank Product: <%= json_variant['production_details']['supplier_decoration'] %></p>
+                <p>Blank Decorator: <%= json_variant['production_details']['blank_docorator'] %></p>
+                <p>DST File: <%= json_variant['production_details']['dst_file'] %></p>
+                <p>SU Comp: <%= json_variant['production_details']['su_comp'] %></p>
+                <p>Proof Required: <%= json_variant['production_details']['proof_required'] %></p>
+              </td>
+              <td>
+                
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      </div>
+      <div class="modal-footer justify-content-between"></div>
+    </div>
+  </div>
+</div>
+
+<style type="text/css">
+  .modal-dialog {
+    max-width: 90%;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  table tr {
+    border-bottom: 1px dotted #aaa;
+  }
+
+  table tr td {
+    padding: 0 5px;
+  }
+</style>

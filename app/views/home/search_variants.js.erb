@@ -1,0 +1,68 @@
+<% @products.each do |product| %>
+  $('#variantsModal #search_results').append(
+    "<%= escape_javascript render(partial: 'product_with_variants', locals: { product: product }) %>"
+  );
+<% end %>
+$('#variantsModal #search_results a').remove();
+<% if @url.present? %>
+  $('#variantsModal #search_results').append('<a href="<%= @url %>"></a>');
+<% end %>
+
+$('#variantsModal #search_results a').off('inview');
+$('#variantsModal #search_results a').on('inview', function(event, isInView) {
+  if (isInView) {
+    $.ajax({
+      method: 'GET',
+      url: $('#variantsModal #search_results a').attr('href'),
+      dataType: 'script'
+    });
+  }
+});
+$('#variantsModal #search_results input[type="checkbox"]').off('change');
+$('#variantsModal #search_results input[type="checkbox"].product-level').on('change', function() {
+  $(this).closest('li').find('.variant-level').prop('checked', $(this).is(':checked'));
+  refreshProductCount();
+});
+
+$('#variantsModal #search_results input[type="checkbox"].variant-level').on('change', function() {
+  var $parent = $(this).closest('li');
+  if ($(this).is(':checked')) {
+    $parent.find('.product-level').prop('checked', true);
+  } else {
+    if ($parent.find('.variant-level:checked').length == 0)
+      $parent.find('.product-level').prop('checked', false);
+  }
+  refreshProductCount();
+});
+
+function refreshProductCount() {
+  var count = $('#variantsModal #search_results .product-level:checked').length;
+  $('#variantsModal #selected_count').text(count);
+}
+
+$('#variantsModal #add-product').on('click', function() {
+  var count = $('#variantsModal #search_results .product-level:checked').length;
+  var shopify_id, product_label, variant_label, one_row, selector;
+  if (count > 0) {
+    $('#variantsModal #search_results .variant-level:checked').each(function() {
+      shopify_id = $(this).val();
+      selector = '#selected-objects-body tr[data-id="' + shopify_id + '"]';
+      if ($(selector).length == 0) {
+        product_label = $(this).closest('li').find('.product-level').next().text();
+        variant_label = $(this).next().text();
+        one_row = '<tr data-id="' + shopify_id + '"><td>';
+        one_row += product_label + '</td><td>';
+        one_row += variant_label + '</td><td><span class='
+        one_row += '"btn btn-small btn-danger object-remove">Remove</span></td>';
+        one_row += $('#rule-item-template').html();
+        one_row += '</tr>';
+        $('#selected-objects-body').append(one_row);
+        $('#selected-objects-body tr:last-child .shopify-id').val(shopify_id);
+        $('#selected-objects-body tr:last-child .shopify-type').val('variant');
+        $('#selected-objects-body tr:last-child .name-1').val(product_label);
+        $('#selected-objects-body tr:last-child .name-2').val(variant_label);
+      }
+    })
+    $("#variantsModal").modal('hide');
+  }
+})

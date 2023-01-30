@@ -1,0 +1,21 @@
+<% http_method = action_name != 'edit' ? :post : :put %>
+<% url = action_name != 'edit' ? purchase_order_items_url : purchase_order_item_url(@po_item) %>
+<%= form_for @po_item, html: {style: ""}, url: url, method: http_method do |f| %>
+	<%= f.hidden_field :shop_id %>
+	<%= f.hidden_field :purchase_order_id %>
+	<%= f.hidden_field :vendor_id %>
+	
+	<%= render partial: 'contents', locals: {po: @po, vendor: @vendor, po_item: @po_item, draft_order: @draft_order, cart_json: @cart_json} %>
+
+	<div class="modal-footer">
+		<span class="btn btn-success">Send to QuickBooks</span>
+		<%= link_to download_pdf_purchase_order_item_path(@po_item, :format => :pdf), method: :get, target: "_blank", class: "btn btn-info download-btn" do %>
+	  	Download
+  	<% end %>
+		<!-- <span class="btn btn-info download-btn" data-invoice-name="<%#= @po_item.po_number(@draft_order.name) %>">Download</span> -->
+		<span class="btn btn-light preview-btn">Email Preview</span>
+		<span class="btn btn-dark invoice-btn">Approve & Send Purchase Order</span>
+    <span class="btn btn-secondary" data-dismiss="modal">Close</span>
+    <button type="submit" class="btn btn-primary">Save</button>
+  </div>
+<% end %>

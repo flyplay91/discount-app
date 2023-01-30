@@ -1,0 +1,136 @@
+<div class="modal fade" id="appendModal" tabindex="-1" aria-labelledby="appendModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="appendModalLabel">Append Draft Order</h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= form_for @po, html: {style: ""}, url: append_draft_order_purchase_order_path(@po), method: :post do |f| %>
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group">
+                <label for="Additional_Packaging_Fees">Packaging Fees</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Additional_Packaging_Fees" id="Additional_Packaging_Fees" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Additional_Packaging_Fees' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Additional_International_Fees">International Fees</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Additional_International_Fees" id="Additional_International_Fees" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Additional_International_Fees' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Additional_DesignArtFee">Design/Art Fee</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Additional_DesignArtFee" id="Additional_DesignArtFee" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Additional_DesignArtFee' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Additional_ThirdParty_ShippingFee">3rd Party Shipping Fees</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Additional_ThirdParty_ShippingFee" id="Additional_ThirdParty_ShippingFee" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Additional_ThirdParty_ShippingFee' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Additional_ThirdParty_ShippingNumberFee">3rd Party Shipping Number Fee</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Additional_ThirdParty_ShippingNumberFee" id="Additional_ThirdParty_ShippingNumberFee" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Additional_ThirdParty_ShippingNumberFee' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Additional_SetupFee">Set Up Fee</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Additional_SetupFee" id="Additional_SetupFee" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Additional_SetupFee' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Additional_DigitizingFee">Digitizing Fee</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Additional_DigitizingFee" id="Additional_DigitizingFee" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Additional_DigitizingFee' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Additional_AssemblyFee">Assembly Fee</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Additional_AssemblyFee" id="Additional_AssemblyFee" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Additional_AssemblyFee' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Additional_CardInsertFee">Custom Card Insert Fee</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Additional_CardInsertFee" id="Additional_CardInsertFee" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Additional_CardInsertFee' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Additional_BrokenBox_Fee">Broken Box Fee</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Additional_BrokenBox_Fee" id="Additional_BrokenBox_Fee" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Additional_BrokenBox_Fee' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Total_Taxes">Total Taxes</label>
+                <div class="d-flex align-items-center">
+                  $
+                  <input type="number" step="0.01" name="Total_Taxes" id="Total_Taxes" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Total_Taxes' }&.first&.value %>">
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group">
+                <br>
+                <label for="Tracking_Numbers">Tracking Numbers</label>
+                <input type="text" name="Tracking_Numbers" id="Tracking_Numbers" class="form-control" value="<%= @draft_order.custom_attributes.select{|c_attr| c_attr.key == 'Tracking_Numbers' }&.first&.value %>">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

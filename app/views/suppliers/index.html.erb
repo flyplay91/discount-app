@@ -1,0 +1,90 @@
+<div class="d-flex" style="justify-content: space-between;">
+  <div style="min-width: 500px;">
+    <%= form_tag suppliers_path, method: :get do %>
+      <input name="keyword" class="form-control"
+        placeholder="Search" style="font-size: 18px;" value="<%= @keyword %>">
+    <% end %>
+  </div>
+  <%= link_to "Add New", new_supplier_path,
+    class: "d-block d-md-inline-block btn btn-primary" %>
+</div>
+<% if @vendors.present? %>
+  <table class="table table-striped" id="vendors-table">
+    <thead class="thead-dark">
+      <tr>
+        <th>Company</th>
+        <th>Category</th>
+        <th>Net Terms</th>
+        <th>Payment</th>
+        <th>Submission</th>
+        <th>Brands</th>
+        <th>3rd Party Shipping</th>
+        <th>International</th>
+        <th>ASI, Retail or Other</th>
+        <th>Agent Assigned</th>
+        <th>Actions</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @vendors.each do |vendor| %>
+        <tr>
+          <td>
+            <%= link_to vendor.company_name, edit_supplier_path(vendor) %>    
+          </td>
+          <td>
+            <% vendor.categories.each do |category| %>
+              <div><%= category %></div>
+            <% end %>
+          </td>
+          <td>
+            <% payment_term = vendor.net_payment_terms.gsub('net_terms_', '').capitalize %>
+            <%= payment_term == 'Custom' ? (vendor.net_terms_custom == 'Other' ? vendor.custom_net_term_description : vendor.net_terms_custom) : payment_term %>
+          </td>
+          <td><%= vendor.payment_primary_string %></td>
+          <td><%= vendor.order_submission_type.to_s.sub('order_submission_', '').capitalize %></td>
+          <td>
+            <% vendor.sub_brands.each do |brand| %>
+              <div><%= brand %></div>
+            <% end %>
+          </td>
+          <td><%= vendor.third_shipping? ? 'YES' : 'NO' %></td>
+          <td><%= vendor.international_supplier? ? 'YES' : 'NO' %></td>
+          <td><%= vendor.company_type %></td>
+          <td><%= vendor.assigned_agent %></td>
+          <td>
+            <%= link_to edit_supplier_path(vendor) do %>
+              <i class="bi bi-pencil"></i>
+            <% end %>
+            <%= link_to supplier_path(vendor), method: :delete,
+                  data: { confirm: 'Are you sure to delete?' }, style: 'color: #dc3545;' do %>
+              <i class="bi bi-trash"></i>
+            <% end %>
+          </td>
+          <td data-id="<%= vendor.id %>">
+            <%= check_box_tag "status[#{vendor.id}]", 'yes', vendor.enabled?,
+              class: 'toggle-status',
+              data: { toggle: 'toggle', onstyle: 'primary', offstyle: 'secondary' } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  No vendors
+<% end %>
+
+<%= will_paginate @vendors, params: {page: params[:page]} %>
+
+<style type="text/css">
+  a {
+    text-decoration: none;
+  }
+
+  @media (min-width: 1400px) {
+    .container {
+      max-width: 90%;
+    }
+  }
+
+</style>

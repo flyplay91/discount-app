@@ -1,0 +1,32 @@
+<% if @draft_orders.edges.present? %>
+  <table class="table table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">Project#</th>
+        <th scope="col">Date</th>
+        <th scope="col">Customer</th>
+        <th scope="col">Draft Status</th>
+        <th scope="col">Total</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @draft_orders.edges.each do |edge| %>
+        <% order = edge.node %>
+        <% draft_order_id = order.id.split('/').last %>
+        <tr>
+          <td>
+            <%= link_to order.name, controller: "purchase_orders", action: "create_po", draft_order_id: draft_order_id %>
+          </td>
+          <td><%= Time.parse(order.created_at).strftime('%b %-d, %Y') %></td>
+          <td><%= "#{order.customer.first_name} #{order.customer.last_name}" if order.customer.present? %></td>
+          <td><%= order.status %></td>
+          <td><%= number_to_currency(order.custom_attributes.select{|c_attr| c_attr.key == 'estimated_total'}&.first&.value || order.total_price) %></td>
+          <td><%= link_to "Details", controller: "purchase_orders", action: "create_po", draft_order_id: draft_order_id %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  No draft orders
+<% end %>

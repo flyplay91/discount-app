@@ -1,0 +1,132 @@
+[
+  {
+    "shopify_id": "31660139479098",
+    "supplier_type": "decorator",
+    "suppliers": [
+      {
+        "name": "Test Company 2",
+        "brand": "sub brand ABC",
+        "type": "supplier"
+      },
+      {
+        "name": "Supplier #2",
+        "brand": "product brand 3",
+        "type": "decorator"
+      }
+    ],
+    "production_details": {
+      "size": "small",
+      "color": "red",
+      "supplier_product_name": "",
+      "supplier_sku": "",
+      "one_time_setup_fee": 11.05,
+      "recurring_reorder_fee": 22.3,
+      "quote_number": "",
+      "supplier_proof_link": "",
+      "proof_photo_link": "",
+      "artwork_url": "",
+      "decoration_location": "",
+      "decoration_type": "_4cp",
+      "logo_name": "",
+      "logo_color": "",
+      "logo_size": "",
+      "inventory_on_hand": 300,
+      "enforced_multiple_quantity": 50,
+      "base_lead_time": "",
+      "start_production": "",
+      "lead_time_in_days": 10,
+      "additional_lead_time": "",
+      "different_cost_based_on_quantity": "Yes",
+      "ship_to": "customer",
+      "supplier_decoration": "",
+      "blank_docorator": "",
+      "dst_file": "",
+      "su_comp": "",
+      "proof_required": "Yes"
+    },
+    "pricing": {
+      "min_item_order_qty": 100,
+      "max_item_order_qty": 1000,
+      "item_qty_per_case": 50,
+      "price_levels": [
+        {
+          "item_qty": 100,
+          "item_wholesale_cost": 100.25,
+          "sale_price_quantity": 80,
+          "item_sale_price": 130.0,
+          "supplier_cost": 100.0,
+          "decorator_cost": 30.0
+        },
+        {
+          "item_qty": 200,
+          "item_wholesale_cost": 95.5,
+          "sale_price_quantity": 150,
+          "item_sale_price": 115,
+          "supplier_cost": 95.0,
+          "decorator_cost": 20.0
+        }
+      ]
+    }
+  },
+  {
+    "shopify_id": "32106383802426",
+    "supplier_type": "single_supplier",
+    "suppliers": [
+      {
+        "name": "Supplier #2",
+        "brand": "product brand 3"
+      }
+    ],
+    "production_details": {
+      "size": "large",
+      "color": "blue",
+      "supplier_product_name": "",
+      "supplier_sku": "",
+      "one_time_setup_fee": 21.05,
+      "recurring_reorder_fee": 32.3,
+      "quote_number": "",
+      "supplier_proof_link": "",
+      "proof_photo_link": "",
+      "artwork_url": "",
+      "decoration_location": "",
+      "decoration_type": "embroidery",
+      "logo_name": "",
+      "logo_color": "",
+      "logo_size": "",
+      "inventory_on_hand": 500,
+      "enforced_multiple_quantity": 30,
+      "base_lead_time": "",
+      "start_production": "",
+      "lead_time_in_days": 15,
+      "additional_lead_time": "",
+      "different_cost_based_on_quantity": "No",
+      "ship_to": "eggers",
+      "supplier_decoration": "",
+      "blank_docorator": "",
+      "dst_file": "",
+      "su_comp": "",
+      "proof_required": "Yes"
+    },
+    "pricing": {
+      "min_item_order_qty": 100,
+      "max_item_order_qty": 500,
+      "item_qty_per_case": 100,
+      "price_levels": [
+        {
+          "item_qty": 100,
+          "item_wholesale_cost": 55.2,
+          "sale_price_quantity": 90,
+          "item_sale_price": 61.5,
+          "supplier_cost": 61.5
+        },
+        {
+          "item_qty": 300,
+          "item_wholesale_cost": 40.5,
+          "sale_price_quantity": 300,
+          "item_sale_price": 42.5,
+          "supplier_cost": 42.5
+        }
+      ]
+    }
+  }
+]

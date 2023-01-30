@@ -1,0 +1,336 @@
+<div class="preview-container">
+	<fieldset style="border: 1px solid #000; padding: 15px;">
+		<legend>Keepers Collective by Straight Up Purchase order for <%= vendor.company_name %></legend>
+		<div class="row">
+		  <dt class="col-sm-4 col-12">PO Date:</dt>
+		  <dd class="col-sm-8 col-12"><%= po.created_at.strftime('%m/%d/%Y') %></dd>
+
+		  <dt class="col-sm-4 col-12">Project#:</dt>
+		  <dd class="col-sm-8 col-12"><%= draft_order.name.gsub('#', '') %></dd>
+
+		  <dt class="col-sm-4 col-12">PO#:</dt>
+		  <dd class="col-sm-8 col-12"><%= po_item.po_number(draft_order.name) %></dd>
+
+		  <dt class="col-sm-4 col-12">Account Number:</dt>
+		  <dd class="col-sm-8 col-12">337711</dd>
+
+		  <dt class="col-sm-4 col-12">Vendor Name:</dt>
+		  <dd class="col-sm-8 col-12"><%= vendor.company_name %></dd>
+
+		  <dt class="col-sm-4 col-12">Ship Date Required:</dt>
+		  <dd class="col-sm-8 col-12">Detailed Below</dd>
+		</div>
+	</fieldset>
+	<br>
+
+	<fieldset style="border: 1px solid #000; padding: 15px;">
+		<legend>Production Lead Time</legend>
+		<div class="row">
+			<dt class="col-sm-4 col-12">PRODUCTION LEAD TIME PROMISED:</dt>
+		  <dd class="col-sm-8 col-12">5-7 Days</dd>
+
+		  <br>
+		  <dt class="col-sm-4 col-12">Production Completion ETA:</dt>
+		  <dd class="col-sm-8 col-12">[Date]</dd>
+		</div>
+	</fieldset>
+	<br>
+
+	<fieldset style="border: 1px solid #000; padding: 15px;">
+		<legend>Shipping Details</legend>
+		<div class="row">
+			<dt class="col-sm-4 col-12">SHIPPING METHOD/ACCOUNT #:</dt>
+		  <dd class="col-sm-8 col-12">UPS Second Day Air Third Party on UPS 17117E</dd>
+		  <br><br>
+
+		  <b>Address Details</b>
+		  <% Cart.shipping_attrs.each do |key| %>
+				<% next if cart_json['attributes'].present? && cart_json['attributes']['Shipping_ShipType'] == 'Single Address' && (key == 'DropShip_Address_Type' || key == 'Address_Attachment_Type') %>
+				<% if cart_json['attributes'].present? && cart_json['attributes'][key].present? %>
+					<dt class="col-sm-4 col-12"><%= PurchaseOrder.maps[key.to_sym] %></dt>
+					<dd class="col-sm-8 col-12">
+						<% if key == 'DropShipAddress_Attachment_File' %><a href="<%= cart_json['attributes'][key] %>" target="_blank" style="word-break: break-all;"><% end %>
+							<% if key == 'DeliveryNeededBy_Date' %>
+								<%= Time.parse(cart_json['attributes'][key]).strftime('%m-%d-%Y') if cart_json['attributes'][key].present? %>
+							<% else %>
+								<%= cart_json['attributes'][key]&.gsub('ShipType_SingleAddress_', '') %>
+							<% end %>
+						<% if key == 'DropShipAddress_Attachment_File' %></a><% end %>
+					</dd>
+				<% end %>
+			<% end %>
+		</div>
+	</fieldset>
+	<br>
+
+	<fieldset style="border: 1px solid #000; padding: 15px;">
+		<legend>Product Details</legend>
+		<% total_qty = 0 %>
+		<% total_costs = 0 %>
+		<% total_setup_cost = 0 %>
+		<% total_run_charge = 0 %>
+		<% total_freight_cost = 0 %>
+		<% if po_item.purchase_order_line_items.present? %>
+			<% po_item.purchase_order_line_items.each_with_index do |line_item, idx| %>
+				<% variant = line_item.variant %>
+				<% total_qty += line_item.qty %>
+				<% total_costs += line_item.unit_cost * line_item.qty %>
+				<% total_costs += line_item.setup_unit_price * line_item.setup_qty %>
+				<% total_costs += (line_item.run_unit_price || 0) * (line_item.run_qty || 0) %>
+				<% total_costs += line_item.freight_cost %>
+				<div>
+					<input type="hidden" name="purchase_order_line_item[][id]" value="<%= line_item.id %>">
+					<input type="hidden" name="purchase_order_line_item[][variant_id]" value="<%= variant.id %>">
+					<input type="hidden" name="send_invoice" value="false">
+					<input type="hidden" name="preview_invoice" value="false">
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<table class="table table-striped" data-item-table>
+							<thead class="thead-dark">
+								<tr>
+									<th>ITEM #<%= idx + 1 %></th>
+									<th>FREIGHT</th>
+									<th>QTY</th>
+									<th>UNIT COST</th>
+									<th>SETUP COST</th>
+									<th>TOTAL COST</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										Supplier SKU: <b><%= variant.supplier_sku || 'Unkown' %></b><br>
+										Supplier Product Name: <b><%= variant.supplier_product_name %></b><br>
+										Variant: <b>
+											<% if variant.option_1 != 'Default Title' %>
+												<%= [variant.option_1, variant.option_2, variant.option_3].reject(&:blank?).join(' x ') %>
+											<% end %>
+											</b><br>
+										KC Item Name: <b><%= variant.product.title %></b><br>
+										Brand: <b><%= variant.vender_sub_brands[variant.real_vendor_ids.index(vendor.id)] %></b><br><br>
+
+										<label for="purchase_order_item_shipping_address">
+											PRODUCTION LEAD TIME PROMISED: <b>5-7 Days</b><br>
+											Production Completion ETA: <b>[DATE]</b>
+										</label>
+									</td>
+									
+									<td>$<input type="number" name="purchase_order_line_item[][freight_cost]" value="<%= line_item.freight_cost %>" min="0"></td>
+
+									<td>
+										<input type="hidden" name="purchase_order_line_item[][qty]" value="<%= line_item.qty %>">
+										<%= line_item.qty %>
+									</td>
+									<td>
+										<input type="hidden" name="purchase_order_line_item[][unit_cost]" value="<%= line_item.unit_cost %>">
+										<%= number_to_currency(line_item.unit_cost) %>
+									</td>
+									<td>
+										<input type="hidden" name="purchase_order_line_item[][setup_qty]" value="<%= line_item.setup_qty %>" min="0">
+										$<input type="number" name="purchase_order_line_item[][setup_unit_price]" value="<%= line_item.setup_unit_price %>" min="0">
+									</td>
+									<td data-item-total>
+										<%= number_to_currency(total_costs) %>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+						<% if variant.artwork_exist %>
+							<b>Artwork Details for <%= variant.supplier_product_name %></b><br>
+							Proof Number:  <b><%= variant.proof_number %></b><br>
+							Proof Required: Note: <b>Email Proof</b><br>
+							Supplier Proof Link: <b><a href="<%= variant.supplier_proof_link %>">View Supplier Proof</a></b><br>
+							Keepers Collective Product Link (for additional reference): <b><a href="<%= variant.proof_photo_link %>">View Product Link</a></b><br>
+							Logo Name: <b><%= variant.logo_name %></b><br>
+							Logo Size: <b><%= variant.logo_size %></b><br>
+							Logo Color: <b><%= variant.logo_color %></b><br>
+							Decoration Location: <b><%= variant.decoration_location %></b><br>
+							Decoration Type: <b><%= variant.decoration_type %></b><br>
+							Artwork/Vector Link: <b><a href="<%= variant.artwork_url %>">View Artwork</a></b><br>
+						<% else %>
+							<b>Artwork Details</b><br>
+							None – Blank Product Purchase<br>
+						<% end %>
+					</div>
+				</div>
+				<hr>
+				<br>
+			<% end %>
+		<% elsif draft_order.line_items.present? %>
+			<% draft_order.line_items.edges.each do |line_item| %>
+				<% variant_id = PurchaseOrder.get_variant_id(line_item) %>
+				<% line_item = line_item.node %>
+				<% variant = Variant.find_by(shopify_id: variant_id) %>
+				<% i = 0 %>
+				<% if variant.present? && (variant.real_vendor_ids.include? vendor.id) %>
+					<% i += 1 %>
+					<% price_rule = variant.get_price_rule(line_item.quantity) %>
+					<% total_qty += line_item.quantity %>
+					<% total_costs += price_rule.item_wholesale_cost * line_item.quantity %>
+					<div>
+						<input type="hidden" name="purchase_order_line_item[][variant_id]" value="<%= variant.id %>">
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<table class="table table-striped" data-item-table>
+								<thead class="thead-dark">
+									<tr>
+										<th>ITEM #<%= i %></th>
+										<th>FREIGHT</th>
+										<th>QTY</th>
+										<th>UNIT COST</th>
+										<th>SETUP COST</th>
+										<th>TOTAL COST</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+											Supplier SKU: <b><%= variant.supplier_sku %></b><br>
+											Supplier Product Name: <b><%= variant.supplier_product_name %></b><br>
+											Variant: <b>
+												<% if variant.option_1 != 'Default Title' %>
+													<%= [variant.option_1, variant.option_2, variant.option_3].reject(&:blank?).join(' x ') %>
+												<% end %>
+												</b><br>
+											KC Item Name: <b><%= variant.product.title %></b><br>
+											Brand: <b><%= variant.vender_sub_brands[variant.real_vendor_ids.index(vendor.id)] %></b><br><br>
+
+											<label for="purchase_order_item_shipping_address">
+												PRODUCTION LEAD TIME PROMISED: <b>5-7 Days</b><br>
+												Production Completion ETA: <b>[DATE]</b>
+											</label>
+										</td>
+										
+										<td>$<input type="number" name="purchase_order_line_item[][freight_cost]" value="0" min="0"></td>
+
+										<td>
+											<input type="hidden" name="purchase_order_line_item[][qty]" value="<%= line_item.quantity %>">
+											<%= line_item.quantity %>
+										</td>
+										<td>
+											<input type="hidden" name="purchase_order_line_item[][unit_cost]" value="<%= price_rule.item_wholesale_cost %>">
+											<%= number_to_currency(price_rule.item_wholesale_cost) %>
+										</td>
+										<td>
+											<input type="hidden" name="purchase_order_line_item[][setup_qty]" value="1" min="0">
+											$<input type="number" name="purchase_order_line_item[][setup_unit_price]" value="0" min="0">
+										</td>
+										<td data-item-total>
+											<%= number_to_currency(price_rule.item_wholesale_cost * line_item.quantity) %>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							
+							<% if variant.artwork_exist %>
+								<b>Artwork Details for <%= variant.supplier_product_name %></b><br>
+								Proof Number:  <b><%= variant.proof_number %></b><br>
+								Proof Required: Note: <b>Email Proof</b><br>
+								Supplier Proof Link: <b><a href="<%= variant.supplier_proof_link %>">View Supplier Proof</a></b><br>
+								Keepers Collective Product Link (for additional reference): <b><a href="<%= variant.proof_photo_link %>">View Product Link</a></b><br>
+								Logo Name: <b><%= variant.logo_name %></b><br>
+								Logo Size: <b><%= variant.logo_size %></b><br>
+								Logo Color: <b><%= variant.logo_color %></b><br>
+								Decoration Location: <b><%= variant.decoration_location %></b><br>
+								Decoration Type: <b><%= variant.decoration_type %></b><br>
+								Artwork/Vector Link: <b><a href="<%= variant.artwork_url %>">View Artwork</a></b><br>
+							<% else %>
+								<b>Artwork Details</b><br>
+								None – Blank Product Purchase<br>
+							<% end %>
+						</div>
+
+
+						<!-- <div class="col-12">
+							<table class="table table-striped">
+								<thead class="thead-dark">
+									<tr>
+										<th>SKU</th>
+										<th>ITEM</th>
+										<th>QTY</th>
+										<th>UNIT COST</th>
+										<th>TOTAL COST</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td><%#= variant.sku %></td>
+										<td>
+											<%#= variant.product.title %>
+											<%# if variant.option_1 != 'Default Title' %>
+												<%#= "(#{[variant.option_1, variant.option_2, variant.option_3].reject(&:blank?).join(' x ')})" %>
+											<%# end %>
+										</td>
+										<td>
+											<input type="hidden" name="purchase_order_line_item[][qty]" value="<%#= line_item.quantity %>">
+											<%#= line_item.quantity %>
+										</td>
+										<td>
+											<input type="hidden" name="purchase_order_line_item[][unit_cost]" value="<%#= price_rule.item_wholesale_cost %>">
+											<%#= number_to_currency(price_rule.item_wholesale_cost) %>
+										</td>
+										<td>
+											<%#= number_to_currency(price_rule.item_wholesale_cost * line_item.quantity) %>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<table class="table table-striped">
+								<thead class="thead-dark">
+									<tr>
+										<th>ARTWORK COSTS</th>
+										<th>QTY</th>
+										<th>UNIT PRICE</th>
+										<th>TOTAL PRICE</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Setup Cost</td>
+										<td><input type="number" name="purchase_order_line_item[][setup_qty]" value="1" min="0"></td>
+										<td>$<input type="number" name="purchase_order_line_item[][setup_unit_price]" value="0" min="0"></td>
+										<td data-setup-total="0">$0</td>
+									</tr>
+									<tr>
+										<td>Run Charge</td>
+										<td><input type="number" name="purchase_order_line_item[][run_qty]" value="<%= line_item.quantity %>" min="0"></td>
+										<td>$<input type="number" name="purchase_order_line_item[][run_unit_price]" value="0" min="0"></td>
+										<td data-run-total="0">$0</td>
+									</tr>
+								</tbody>
+							</table>
+						</div> -->
+					</div>
+					<hr>
+					<br>
+				<% end %>	
+			<% end %>
+		<% end %>
+		<div class="row">
+			<div class="col-12 col-md-6 offset-md-6">
+				<dl class="row">
+				  <dt class="col-6">TOTAL UNITS ORDERED</dt>
+				  <dd class="col-6 text-right"><%= total_qty %></dd>
+
+				  <dt class="col-6">TOTAL UNIT COSTS</dt>
+				  <dd class="col-6 text-right" data-total-costs="<%= total_costs %>"><%= number_to_currency(total_costs) %></dd>
+
+				  <dt class="col-6">TOTAL SETUP COST</dt>
+				  <dd class="col-6 text-right" data-total-setup-cost><%= number_to_currency(total_setup_cost) %></dd>
+
+				  <dt class="col-6">TOTAL RUN COSTS</dt>
+				  <dd class="col-6 text-right" data-total-run-charge><%= number_to_currency(total_run_charge) %></dd>
+
+					<dt class="col-6">TOTAL FREIGHT COSTS</dt>
+				  <dd class="col-6 text-right" data-total-freight-cost><%= number_to_currency(total_run_charge) %></dd>				  
+
+				  <dt class="col-6">ORDER TOTAL</dt>
+				  <dd class="col-6 text-right" style="text-decoration: overline;" data-order-total><%= number_to_currency(total_costs + total_setup_cost + total_run_charge + total_freight_cost) %></dd>
+				</dl>
+			</div>
+		</div>
+	</fieldset>	
+</div>

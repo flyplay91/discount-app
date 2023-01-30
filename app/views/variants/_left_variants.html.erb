@@ -1,0 +1,26 @@
+<div>
+  <b>Product Name</b>
+</div>
+<div style="margin: 10px 0 30px;"><%= @variant.product.title %></div>
+<div class="variant-item"><b>Variants</b></div>
+<div class="variant-item">
+  <%= @variant.title %>
+</div>
+
+<% @variant.product.variants.each do |variant| %>
+  <% unless @variant == variant %>
+    <div class="variant-item">
+      <%= link_to variant.title, edit_variant_path(variant) %>
+    </div>
+  <% end %>
+<% end %>
+
+<div style="margin-top: 30px;">
+  <%= link_to '<< Product List', products_path %>
+</div>
+
+<style type="text/css">
+  .variant-item {
+    padding: 5px 0;
+  }
+</style>

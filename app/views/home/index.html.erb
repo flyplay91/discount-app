@@ -1,0 +1,64 @@
+<h1>Dashboard</h1>
+<br>
+<h3>Statistic</h3>
+<div class="row">
+  <div class="col-md-3 col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h1>
+          <%= link_to @count[:vendor], suppliers_path %>    
+        </h1>
+        <br>
+        <p>Vendors/Suppliers</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h1>
+          <%= link_to @count[:product], products_path %>    
+        </h1>
+        <br>
+        <p>Products</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h1>
+          <%= link_to @count[:draft_order], orders_path %>    
+        </h1>
+        <br>
+        <p>Draft Orders</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h1>
+          <%= link_to @count[:po], purchase_orders_path %>    
+        </h1>
+        <br>
+        <p>Purchase Orders</p>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<h3>Purchase Order Updates</h3>
+
+<style>
+  .card-body {
+    text-align: center;
+  }
+
+  p {
+    font-size: 1.2rem;
+  }
+</style>

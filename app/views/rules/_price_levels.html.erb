@@ -1,0 +1,67 @@
+<div id="price_levels">
+  <br>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <label id="selected_label">Price Levels</label>
+          </div>
+          <div class="price-levels-section">
+            <table class="table">
+              <thead>
+                <th class="col-md-2 col-lg-3">Quantity</th>
+                <th class="col-md-3 col-lg-3">Discount</th>
+                <th class="col-md-1 col-lg-1"></th>
+                <th class="col-md-3 col-lg-5"></th>
+              </thead>
+              <tbody id="price-levels-body">
+                <%= f.fields_for :price_levels, @rule.price_levels do |fp| %>
+                  <tr>
+                    <td>
+                      <%= fp.number_field :break_number,
+                        class: 'form-control', min: 1 %>
+                      </td>
+                    <td>
+                      <div class="input-group discount_price_group">
+                        <%= fp.number_field :discount_amount,
+                          class: 'discount_price form-control discount', min: 1 %>
+                        <div class="input-group-addon">
+                          <%= fp.select :discount_type,
+                            options_for_select([['USD (Price Discount)', 'price_discount'],
+                              ['USD (Fixed Price)', 'fixed_price'], ['% Off', 'percent_discount']], fp.object.discount_type),
+                              {}, class: 'form-control discount' %>
+                        </div>
+                      </div>
+                    </td>
+                    <td><i class="bi bi-trash"></i></td>
+                    <td>
+                      <% if fp.object.persisted? %>
+                        <% if fp.object.price_discount? %>
+                          Get $<%= fp.object.discount_amount %> Off on each product
+                        <% elsif fp.object.fixed_price? %>
+                          Get each product for $<%= fp.object.discount_amount %>
+                        <% elsif fp.object.percent_discount? %>
+                          Get <%= fp.object.discount_amount %>% Off on each product
+                        <% end %>
+                      <% end %>
+                    </td>
+                    <% if fp.object.persisted? %>
+                      <%= fp.hidden_field :id %>
+                      <%= fp.hidden_field :_destroy, class: 'destroy' %>
+                    <% end %>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <div class="row">
+              <div class="col-12">
+                <span id="add-price-level" class="btn btn-primary">Add Price</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

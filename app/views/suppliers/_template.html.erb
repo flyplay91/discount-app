@@ -1,0 +1,70 @@
+<template id="sub-brand-template">
+  <div class="row" style="align-items: center; margin-bottom: 15px;">
+    <div class="col-sm-6">
+      <input value="" multiple="multiple" id="vendor_sub_brands_NESTED_ID"
+        class="form-control" type="text" name="vendor[sub_brands][]">
+    </div>
+    <div class="col-sm-6">
+      <i class="bi bi-trash"></i>
+    </div>
+  </div>
+</template>
+
+<template id="sub-category-template">
+  <div class="row" style="align-items: center; margin-bottom: 15px;">
+    <div class="col-sm-6">
+      <select name="vendor[categories][]" id="vendor_categories_NESTED_ID" class="form-control">
+        <option value="" label=""></option>
+        <% if Shop.first.categories.present? %>
+          <% Shop.first.categories.each do |category| %>
+            <option value="<%= category %>"><%= category %></option>
+          <% end %>
+        <% end %>
+      </select>
+    </div>
+    <div class="col-sm-6">
+      <i class="bi bi-trash"></i>
+    </div>
+  </div>
+</template>
+
+<template id="lead-time-template">
+  <div class="row lead-time-row">
+    <div class="col-12 col-sm-12">
+      <div class="lead-time">
+        <div class="lead-time-item">
+          <h5>Product Quantity</h5>
+          <div style="margin-right: 15px;">
+            <label for="vendor_lead_times_attributes_NESTED_ID_min_qty">Min Qty</label>
+            <input class="form-control" type="number" value="" name="vendor[lead_times_attributes][NESTED_ID][min_qty]" id="vendor_lead_times_attributes_NESTED_ID_min_qty">
+          </div>
+          <div>
+            <label for="vendor_lead_times_attributes_NESTED_ID_max_qty">Max Qty</label>
+            <input class="form-control" type="number" value="" name="vendor[lead_times_attributes][NESTED_ID][max_qty]" id="vendor_lead_times_attributes_NESTED_ID_max_qty">
+          </div>
+        </div>
+        <div class="lead-time-item">
+          <h5>Range of Time</h5>
+          <div style="margin-right: 15px;">
+            <label for="vendor_lead_times_attributes_NESTED_ID_min_days">Min Days</label>
+            <input class="form-control" type="number" value="" name="vendor[lead_times_attributes][NESTED_ID][min_days]" id="vendor_lead_times_attributes_NESTED_ID_min_days">
+          </div>
+          <div>
+            <label for="vendor_lead_times_attributes_NESTED_ID_max_days">Max Days</label>
+            <input class="form-control" type="number" value="" name="vendor[lead_times_attributes][NESTED_ID][max_days]" id="vendor_lead_times_attributes_NESTED_ID_max_days">
+          </div>
+        </div>
+        <div class="lead-time-item">
+          <h5>Days or Weeks</h5>
+          <div>
+            <label for="vendor_lead_times_attributes_NESTED_ID_period_type">Business Days</label>
+            <select class="form-control" name="vendor[lead_times_attributes][NESTED_ID][period_type]" id="vendor_lead_times_attributes_NESTED_ID_period_type"><option value=""></option>
+              <option value="days">Days</option>
+              <option value="weeks">Weeks</option></select>
+          </div>
+        </div>
+        <i class="bi bi-trash"></i>
+      </div>
+    </div>
+  </div>
+</template>

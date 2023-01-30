@@ -1,0 +1,98 @@
+= form_for @rule do |f|
+  .row
+    .col-12.col-md-6
+      .card
+        .card-body
+          .form-group
+            = f.label :name, 'Rule Name'
+            = f.text_field :name, placeholder: "Enter Rule Name", class: "form-control", required: true
+    .col-12.col-md-6
+      .card
+        .card-body
+          .form-group
+            = f.label :status
+            %div
+              = f.check_box :status, "data-toggle": "toggle", "data-onstyle": "primary", "data-offstyle": "secondary"
+  %br
+  .row
+    .col-12
+      .card
+        .card-body
+          = f.label :rule_type, 'Rule Type'
+          %div
+            - Rule.rule_types.each_with_index do |rule, index|
+              .form-check.form-check-inline
+                = f.radio_button :rule_type, rule[0], id: "rule_type_#{index}",
+                  class: 'form-check-input', disabled: @rule.persisted?
+                %label.form-check-label{for: "rule_type_#{index}"}= rule[0].capitalize
+
+
+  #conditional_elements
+    %br
+    .row
+      .col-12
+        .card
+          .card-body
+            = f.label :select_cat, 'Select products'
+            %div
+              .form-check.form-check-inline
+                = f.radio_button :select_cat, 'select_all', id: 'select_cat_1',
+                  class: 'form-check-input'
+                %label.form-check-label{for: "select_cat_1"} Select All
+              .form-check.form-check-inline
+                = f.radio_button :select_cat, 'custom', id: 'select_cat_0',
+                  class: 'form-check-input'
+                %label.form-check-label{for: "select_cat_0"} Custom Selection
+
+    #filter_cat{class: ('d-none' unless f.object.product? && f.object.custom?)}
+      %br
+      .row
+        .col-12
+          .card
+            .card-body
+              = f.label :filter_cat, 'Filters'
+              %div
+                .form-check.form-check-inline
+                  = f.radio_button :filter_cat, 'filter_custom', id: 'filter_cat_0',
+                    class: 'form-check-input'
+                  %label.form-check-label{for: "filter_cat_0"} Custom
+                .form-check.form-check-inline
+                  = f.radio_button :filter_cat, 'filter_any', id: 'filter_cat_1',
+                    class: 'form-check-input'
+                  %label.form-check-label{for: "filter_cat_1"} Any Conditions
+                .form-check.form-check-inline
+                  = f.radio_button :filter_cat, 'filter_all', id: 'filter_cat_2',
+                    class: 'form-check-input'
+                  %label.form-check-label{for: "filter_cat_2"} All Conditions
+              #conditions{class: ('d-none' unless f.object.show_conditions?)}
+                = f.fields_for :conditions, @rule.conditions do |c|
+                  .row.condition-item
+                    .col-12.col-md-6
+                      .form-group
+                        = c.select :condition_type,
+                          options_for_select([['Product Vendor', 'vendor'], ['Product Type', 'type'], ['Product Tag', 'tag']]),
+                          {}, class: 'form-control'
+                    .col-12.col-md-6
+                      .form-group.d-flex.align-items-center.justify-content-between
+                        = c.text_field :condition_str, placeholder: 'Type Here', class: 'form-control'
+                        %i.bi.bi-trash
+                    - if c.object.persisted?
+                      = c.hidden_field :id
+                      = c.hidden_field :_destroy, class: 'destroy'
+                .row
+                  .col-12
+                    %span#add_new_filter.btn.btn-primary Add Condition
+              / .row
+              /   .col-12
+              /     %span#select_products.btn.btn-primary{"data-toggle": "modal", "data-target": "#productsModal"} Select Products
+
+    = render 'selected_objects'
+    = render 'price_levels', f: f
+  = f.submit
+
+= render 'shared/products_modal'
+= render 'shared/variants_modal'
+= render 'shared/collections_modal'
+
+= render 'rule_item_template'
+

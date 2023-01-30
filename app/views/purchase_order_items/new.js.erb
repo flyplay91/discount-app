@@ -1,0 +1,57 @@
+<% if @po.present? && @draft_order.present? && @vendor.present? %>
+$('#poItemModal .modal-body').html("<%= escape_javascript(render partial: 'purchase_order_items/form', locals: {}) %>");
+$( "#purchase_order_item_required_ship_date" ).datepicker({
+	defaultDate: new Date()
+});
+$('[name="purchase_order_line_item[][setup_qty]"], [name="purchase_order_line_item[][setup_unit_price]"]').on('change', function() {
+	var qty = Math.max(parseInt($(this).closest('tr').find('[name="purchase_order_line_item[][setup_qty]"]').val()), 0);
+	var price = Math.max(parseFloat($(this).closest('tr').find('[name="purchase_order_line_item[][setup_unit_price]"]').val()), 0);
+	var total = qty * price;
+	const formatter = new Intl.NumberFormat('en-US', {
+	  style: 'currency',
+	  currency: 'USD',
+	  minimumFractionDigits: 2
+	});
+	$(this).closest('tr').find('[data-setup-total]').html(formatter.format(total));
+	$(this).closest('tr').find('[data-setup-total]').data('setup-total', total);
+	$(this).closest('tr').find('[data-run-total]').html(formatter.format(total));
+	$(this).closest('tr').find('[data-run-total]').data('run-total', total);
+	var total_costs = parseFloat($('[data-total-costs]').data('total-costs'));
+	var setup_total = 0;
+	var run_total = 0;
+	$('[data-setup-total]').each(function() {
+		setup_total += parseFloat($(this).data('setup-total'));
+	});
+	$('[data-run-total]').each(function() {
+		run_total += parseFloat($(this).data('run-total'));
+	});
+	$('[data-total-setup-cost]').html(formatter.format(setup_total));
+	$('[data-total-run-charge]').html(formatter.format(run_total));
+	$('[data-order-total]').html(formatter.format(total_costs + setup_total + run_total));
+});
+$('[name="purchase_order_line_item[][run_qty]"], [name="purchase_order_line_item[][run_unit_price]"]').on('change', function() {
+	var qty = Math.max(parseInt($(this).closest('tr').find('[name="purchase_order_line_item[][run_qty]"]').val()), 0);
+	var price = Math.max(parseFloat($(this).closest('tr').find('[name="purchase_order_line_item[][run_unit_price]"]').val()), 0);
+	var total = qty * price;
+	const formatter = new Intl.NumberFormat('en-US', {
+	  style: 'currency',
+	  currency: 'USD',
+	  minimumFractionDigits: 2
+	});
+	$(this).closest('tr').find('[data-run-total]').html(formatter.format(total));
+	$(this).closest('tr').find('[data-run-total]').data('run-total', total);
+	var total_costs = parseFloat($('[data-total-costs]').data('total-costs'));
+	var setup_total = 0;
+	var run_total = 0;
+	$('[data-setup-total]').each(function() {
+		setup_total += parseFloat($(this).data('setup-total'));
+	});
+	$('[data-run-total]').each(function() {
+		run_total += parseFloat($(this).data('run-total'));
+	});
+	$('[data-total-setup-cost]').html(formatter.format(setup_total));
+	$('[data-total-run-charge]').html(formatter.format(run_total));
+	$('[data-order-total]').html(formatter.format(total_costs + setup_total + run_total));
+});
+$('#poItemModal').modal('show');
+<% end %>

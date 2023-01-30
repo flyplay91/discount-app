@@ -1,0 +1,18 @@
+.modal.fade#collectionsModal{ tabindex: "-1", "aria-labelledby": "collectionsModalLabel", "aria-hidden": "true"}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %h5.modal-title#collectionsModalLabel Add collections
+        %button.close{ type: "button", "data-dismiss": "modal", "aria-label": "Close"}
+          %span{ "aria-hidden": "true" } &times;
+        
+      .modal-body
+        %input#search_collections{placeholder: "Search collections", style: "width: 100%;"}
+        %ul#search_results
+      .modal-footer.justify-content-between
+        %span
+          %span#selected_count 0
+          collections selected
+        %div
+          %button.btn.btn-secondary{ type: "button", "data-dismiss": "modal"} Close
+          %button#add-collection.btn.btn-primary{type: "button"} Add

@@ -1,0 +1,32 @@
+#variant-content {
+  #vendor-details, #product-details, #production-details {
+    .vendor-profile {
+      margin-bottom: 15px;
+      align-items: center;
+      .col-sm-2 {
+        padding-top: 15px;
+      }
+      &:first-child {
+        .bi-trash {
+          display: none;
+        }
+      }
+    }
+  }
+  .price-level {
+    margin-bottom: 15px;
+    .card-body {
+      position: relative;
+      .bi-trash {
+        position: absolute;
+        right: 18px;
+        top: 12px;
+      }
+    }
+    &:first-child {
+      .bi-trash {
+        display: none;
+      }
+    }
+  }
+}

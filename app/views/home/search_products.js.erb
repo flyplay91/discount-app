@@ -1,0 +1,50 @@
+<% @products.each do |product| %>
+  $('#productsModal #search_results').append(
+    "<%= escape_javascript render(partial: 'product', locals: { product: product }) %>"
+  );
+<% end %>
+$('#productsModal #search_results a').remove();
+<% if @url.present? %>
+  $('#productsModal #search_results').append('<a href="<%= @url %>"></a>');
+<% end %>
+
+$('#productsModal #search_results a').off('inview');
+$('#productsModal #search_results a').on('inview', function(event, isInView) {
+  if (isInView) {
+    $.ajax({
+      method: 'GET',
+      url: $('#productsModal #search_results a').attr('href'),
+      dataType: 'script'
+    });
+  }
+});
+$('#productsModal #search_results input[type="checkbox"]').off('change');
+$('#productsModal #search_results input[type="checkbox"]').on('change', function() {
+  var count = $('#productsModal #search_results input[type="checkbox"]:checked').length;
+  $('#productsModal #selected_count').text(count);
+});
+
+$('#productsModal #add-product').on('click', function() {
+  var count = $('#productsModal #search_results input[type="checkbox"]:checked').length;
+  var shopify_id, shopify_label, one_row, selector;
+  if (count > 0) {
+    $('#productsModal #search_results input[type="checkbox"]:checked').each(function() {
+      shopify_id = $(this).val();
+      selector = '#selected-objects-body tr[data-id="' + shopify_id + '"]';
+      if ($(selector).length == 0) {
+        shopify_label = $(this).next().text();
+        one_row = '<tr data-id="' + shopify_id + '"><td>';
+        one_row += shopify_label + '</td><td><span class='
+        one_row += '"btn btn-small btn-danger object-remove">Remove</span></td>';
+        one_row += $('#rule-item-template').html();
+        one_row += '</tr>';
+        one_row = one_row.replace(/NESTED_ID/g, $('#selected-objects-body tr').length)
+        $('#selected-objects-body').append(one_row);
+        $('#selected-objects-body tr:last-child .shopify-id').val(shopify_id);
+        $('#selected-objects-body tr:last-child .shopify-type').val('product');
+        $('#selected-objects-body tr:last-child .name-1').val(shopify_label);
+      }
+    })
+    $("#productsModal").modal('hide');
+  }
+})

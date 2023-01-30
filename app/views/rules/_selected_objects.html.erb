@@ -1,0 +1,74 @@
+<div id="selected_objects" class="<%= 'd-none' unless @rule.show_selected_objects? %>">
+  <br>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <label id="selected_label">Selected Products</label>
+            <div>
+              <span id="select-products" class="btn btn-primary"
+                data-toggle="modal" data-target="#productsModal">
+                Select Products
+              </span>
+              <span id="select-variants" class="btn btn-primary d-none"
+                data-toggle="modal" data-target="#variantsModal">
+                Select Variants
+              </span>
+              <span id="select-collections" class="btn btn-primary d-none"
+                data-toggle="modal" data-target="#collectionsModal">
+                Select Collections
+              </span>
+            </div>
+          </div>
+          <div class="selected-objects-section">
+            <table class="table">
+              <thead>
+                <% if @rule.product? %>
+                  <th class="col-md-10">Product Name</th>
+                  <th class="col-md-2">Action</th>
+                <% elsif @rule.variant? %>
+                  <th class="col-md-6">Product Name</th>
+                  <th class="col-md-4">Variant Name</th>
+                  <th class="col-md-2">Action</th>
+                <% elsif @rule.collection? %>
+                  <th class="col-md-10">Collection Name</th>
+                  <th class="col-md-2">Action</th>
+                <% end %>
+              </thead>
+              <tbody id="selected-objects-body">
+                <% @rule.rule_items.each_with_index do |rule_item, index| %>
+                  <tr data-id="<%= rule_item.shopify_id %>">
+                    <td><%= rule_item.name_1 %></td>
+                    <% if @rule.product? %>
+                    <% elsif @rule.variant? %>
+                      <td><%= rule_item.name_2 %></td>
+                    <% elsif @rule.collection? %>
+                    <% end %>
+                    <td><span class="btn btn-small btn-danger object-remove">Remove</span></td>
+                    <input type="hidden"
+                      name="rule[rule_items_attributes][<%= index %>][id]"
+                      value="<%= rule_item.id %>">
+                    <input type="hidden" class="shopify-destroy"
+                      name="rule[rule_items_attributes][<%= index %>][_destroy]"
+                      value="false">
+                    <input type="hidden" class="shopify-id"
+                      name="rule[rule_items_attributes][<%= index %>][shopify_id]"
+                      value="<%= rule_item.shopify_id %>">
+                    <input type="hidden" class="shopify-type"
+                      name="rule[rule_items_attributes][<%= index %>][shopify_type]"
+                      value="<%= rule_item.shopify_type %>">
+                    <input type="hidden" class="name-1" value="<%= rule_item.name_1 %>"
+                      name="rule[rule_items_attributes][<%= index %>][name_1]">
+                    <input type="hidden" class="name-2" value="<%= rule_item.name_2 %>"
+                      name="rule[rule_items_attributes][<%= index %>][name_2]">
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
