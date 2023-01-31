@@ -50,7 +50,7 @@ test:
 #
 production:
   <<: *default
-  database: volume_discount_production
+  # database: volume_discount_production
   # username: volume_discount
   # password: <%= ENV['VOLUME_DISCOUNT_DATABASE_PASSWORD'] %>
-  # url: <%= ENV['DATABASE_URL'] %>
+  url: <%= ENV['DATABASE_URL'] %>
